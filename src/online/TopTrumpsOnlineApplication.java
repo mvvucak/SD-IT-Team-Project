@@ -21,6 +21,9 @@ import io.dropwizard.views.ViewBundle;
  * Top Trumps Web Application. This class is complete, you do not need to edit it, you
  * instead need to complete TopTrumpsRESTAPI and the HTML/Javascript views.
  */
+
+// test 
+
 public class TopTrumpsOnlineApplication extends Application<TopTrumpsJSONConfiguration> {
 
 	/**
