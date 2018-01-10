@@ -22,7 +22,7 @@ import io.dropwizard.views.ViewBundle;
  * instead need to complete TopTrumpsRESTAPI and the HTML/Javascript views.
  */
 
-// test 
+// test update
 
 public class TopTrumpsOnlineApplication extends Application<TopTrumpsJSONConfiguration> {
 
