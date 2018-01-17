@@ -1,4 +1,5 @@
-public class Game() {
+public class Game {
+	
 	private Player[] playerArr;
 	private int noOfPlayers = 0; 
 
@@ -11,11 +12,11 @@ public class Game() {
 
 	public void init() {
 		// add players to game 
-		this.addAllPlayers()
+		this.addAllPlayers();
 
 			while (!gameover) {
 				this.getRound(); // print round number to cmdl
-				this.getRandomPlayer();
+				this.selectRandomPlayer();
 
 			// ----------------------------------------------------
 			// Add your game logic here based on the requirements
@@ -34,6 +35,17 @@ public class Game() {
 		}
 	}
 
+	private void addPlayersSessions() {
+	}
+	
+	private void addAllPlayers() {
+	}
+	
+	
+	private int getRound() {
+		
+	}
+	
 	private Player selectRandomPlayer() {
 		// gets a random number between 0 and max no of players
 		// int randomNo = ( (int) (Math.random() ); 
