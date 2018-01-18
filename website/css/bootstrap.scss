@@ -1,0 +1,95 @@
+
+* {
+  font-family: 'Oswald', sans-serif;
+}
+
+body {
+  background-color: #fcfaef;
+}
+
+.col-md-12 {
+  width: 75%;
+  display: center;
+
+  #navigation {
+    background-color: DarkOliveGreen;
+    padding: 10px;
+    font-size: 25px;
+    text-align: right;
+    text-transform: lowercase;
+    }
+
+  li {
+    list-style: none;
+    display: inline-block;
+  }
+
+  h1 {
+    color: #f1f9e5;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 50px;
+  }
+}
+
+a {
+  color: #f1f9e5;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #e1fcb8;
+}
+
+a:hover {
+  cursor: pointer;
+  top: 2px;
+}
+
+#intro-text {
+  background-color: #e1fcb8;
+  padding: 10px 25px 10px 25px;
+  text-align: left;
+  font-size: 30px;
+  text-transform: lowercase;
+
+  .project-type {
+    list-style: none;
+    font-size: 20px;
+  }
+}
+
+.col-md-3 {
+  float: left;
+  width: 20%;
+}
+
+#portfolio-heading {
+  width: 60%;
+
+  h2 {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 40px;
+  }
+
+  img {
+  padding: 0 5px 0 5px;
+  height: 200px;
+  width: 300px;
+  }
+
+  h4 {
+  text-transform: lowercase;
+  }
+
+  p a {
+  color: black;
+  }
+}
+
+#footer {
+  display: inline-block;
+  background-color: DarkOliveGreen;
+  width: 100%;
+}

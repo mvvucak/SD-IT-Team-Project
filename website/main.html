@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <title>Top Trumps</title>
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="top-bar">
+          <h1>Round #<h1>
+          <h2>It is PLAYER turn</h2>
+          </div>
+        </div>
+      </div>
+
+        <div class="col-md-9">
+          <div id="card-header">
+            <h2>YOUR CURRENT CARD</h2>
+            <h5>spaceship name</h5>
+          </div>
+
+          <div class="btn-group">
+            <button id="btn-lg" onclick="btnPress()">SIZE<br>(#)</button>
+            <button class="btn-lg">SPEED<br>(#)</button>
+            <button class="btn-lg">RANGE<br>(#)</button>
+            <button class="btn-lg">FIREPOWER<br>(#)</button>
+            <button class="btn-lg">CARGO<br>(#)</button>
+          </div>
+
+          <div class="col-md-3">
+              <div id="card-info">
+              <h4 id="AIone">AI #</h4>
+              <h5>spaceship name</h5>
+              <p>size #<br>speed #<br>range #<br>firepower #<br>cargo #<br></p>
+              </div>
+          </div>
+
+          <div class="col-md-3">
+              <div id="card-info">
+              <h4>AI #</h4>
+              <p>size<br>speed<br>range<br>firepower<br>cargo<br></p>
+              </div>
+          </div>
+
+          <div class="col-md-3">
+              <div id="card-info">
+              <h4>AI #</h4>
+              <p>size<br>speed<br>range<br>firepower<br>cargo<br></p>
+              </div>
+          </div>
+
+          <div class="col-md-3">
+              <div id="card-info">
+              <h4>AI #</h4>
+              <p>size<br>speed<br>range<br>firepower<br>cargo<br></p>
+              </div>
+          </div>
+         </div>
+
+
+    <div class="row">
+        <div id="game-end">
+          <button class="btn-lg" onClick="highlightWinner('AIone')">SHOW WINNER</button>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <div id="stats-btn">
+            <button class="btn-lg" onclick="window.location.href='stats.html'">VIEW PAST GAME STATISTICS</button>
+          </div>
+        </div>
+      </div>
+
+    <script type="text/javascript" src="javascript/script.js"></script>
+
+  </body>
+</html
