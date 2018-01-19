@@ -1,3 +1,5 @@
+package logic;
+
 public class Card implements Comparable<Card>{
 	private String description;
 	private int[] cat = new int[5]; 
