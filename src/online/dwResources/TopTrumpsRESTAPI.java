@@ -34,7 +34,8 @@ public class TopTrumpsRESTAPI {
 	/** A Jackson Object writer. It allows us to turn Java objects
 	 * into JSON strings easily. */
 	ObjectWriter oWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
-	
+	private final String availableAI;
+	private final String deckName;
 	/**
 	 * Contructor method for the REST API. This is called first. It provides
 	 * a TopTrumpsJSONConfiguration from which you can get the location of
@@ -45,6 +46,9 @@ public class TopTrumpsRESTAPI {
 		// ----------------------------------------------------
 		// Add relevant initalization here
 		// ----------------------------------------------------
+		conf.getDeckFile();
+		this.availableAI = Integer.toString(conf.getNumAIPlayers());
+		this.deckName = conf.getDeckFile();
 	}
 	
 	// ----------------------------------------------------
@@ -52,23 +56,23 @@ public class TopTrumpsRESTAPI {
 	// ----------------------------------------------------
 	
 	@GET
-	@Path("/helloJSONList")
+	@Path("/options")
 	/**
 	 * Here is an example of a simple REST get request that returns a String.
 	 * We also illustrate here how we can convert Java objects to JSON strings.
 	 * @return - List of words as JSON
 	 * @throws IOException
 	 */
-	public String helloJSONList() throws IOException {
+	public String gameOptionJSON() throws IOException {
 		
 		List<String> listOfWords = new ArrayList<String>();
-		listOfWords.add("Hello");
-		listOfWords.add("World!");
+		listOfWords.add(this.availableAI);
+		listOfWords.add(this.deckName);
 		
 		// We can turn arbatory Java objects directly into JSON strings using
 		// Jackson seralization, assuming that the Java objects are not too complex.
 		String listAsJSONString = oWriter.writeValueAsString(listOfWords);
-		
+
 		return listAsJSONString;
 	}
 	
