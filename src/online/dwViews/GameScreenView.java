@@ -15,16 +15,11 @@ import io.dropwizard.views.View;
  * however we do not expect you to use the additional functionality that freemarker provides.
  */
 public class GameScreenView extends View {
-//	private final String user = "Cameron";
 	/**
 	 * Simple Constructor method, it simply specifies where the HTML page is to return.
 	 */
     public GameScreenView() {
         super("GameScreen.ftl");
-        // this.user = user;
     }
 
-//    public String getUser() {
-//        return user;
-//    }
 }
