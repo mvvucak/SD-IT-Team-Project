@@ -1,3 +1,4 @@
+var AiNum = 0;
 
 function btnPress() {
     console.log("button pressed");
@@ -9,8 +10,6 @@ function redirect() {
     })
 }
 
-var AiNum = 0;
-
 function getAiNum(chosenAi) {
     AiNum = Number(chosenAi);
     printAiCard();
@@ -19,11 +18,15 @@ function getAiNum(chosenAi) {
 function printAiCard() {
     console.log("ain " + AiNum);
     var card = document.getElementById("card-info");
+    var cardList = [];
     for (var i = 0; i < AiNum; i++) {
         //card[i].id = "AI" + i;
         console.log(i);
-        card.innerHTML += card.innerHTML;
+        cardList.push(card.innerHTML);
     }
+    card.setAttribute("style", "white-space:nowrap;");
+    card.innerHTML = cardList.join(" ");
+
 }
 
 function highlightWinner(AIone) {
