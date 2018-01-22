@@ -1,3 +1,5 @@
+package logic;
+
 public class Deck {
 
 	private Card[] cards;
