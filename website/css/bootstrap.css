@@ -56,8 +56,8 @@ body {
   padding: 5% 3% 5% 0%;
 }
 
-.col-md-3 p {
-
+#card-info {
+  border-style: 2px solid black;
 }
 
 .btn-group {
@@ -98,13 +98,23 @@ h2 {
 }
 
 .col-md-6 {
-  margin-left: 25%;
-  display: inline-block;
-  padding: 5% 3% 15% 0%;
+  margin: 0 5% 0 20%;
+  text-align: center;
+  font-size: 40px;
 }
 
 .col-md-6 h3{
-  padding-bottom: 35%;
+  padding: 15%;
+}
+
+#hWin {
+  color: black;
+  border-style: solid;
+}
+
+#numRounds {
+  color: black;
+  border-style: solid;
 }
 
 /*# sourceMappingURL=bootstrap.css.map */

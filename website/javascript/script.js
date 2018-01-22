@@ -1,3 +1,4 @@
+var AiNum = 0;
 
 function btnPress() {
     console.log("button pressed");
@@ -9,33 +10,27 @@ function redirect() {
     })
 }
 
-var AiNum = 0;
-
-function getAiNum(chosenAI) {
-    console.log(chosenAI);
-    return chosenAI;
+function getAiNum(chosenAi) {
+    AiNum = Number(chosenAi);
+    printAiCard();
 }
 
-getAiNum();
+function printAiCard() {
+    console.log("ain " + AiNum);
+    var card = document.getElementById("card-info");
+    var cardList = [];
+    for (var i = 0; i < AiNum; i++) {
+        //card[i].id = "AI" + i;
+        console.log(i);
+        cardList.push(card.innerHTML);
+    }
+    card.setAttribute("style", "white-space:nowrap;");
+    card.innerHTML = cardList.join(" ");
 
-// function getAiNum(){
-//     if (document.getElementById("1p").addEventListener("click", function(){
-//     console.log('1p');
-//     AiNum = 1;
-//     }));
-//         console.log(AiNum);
-//     return AiNum;
-// }
-    /*else (document.getElementById("2p").addEventListener("click", function(){
-    console.log("2p") })
-    })*/
-
-for (var i = 0; i < AiNum; i++) {
-    console.log("ai " + (i+1));
-    //document.write();
 }
 
-
-/*function highlightWinner(AIone) {
+function highlightWinner(AIone) {
     document.getElementById(AIone).style.border = "5px solid green";
-}*/
+}
+
+//var winCount = {"aiWins": 27};
