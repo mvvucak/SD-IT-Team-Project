@@ -1,56 +1,75 @@
+package logic;
+
 public class Game {
 	
-	private Player[] playerArr;
-	private int noOfPlayers = 0; 
+	private Player[] playerList;
+	private int noOfPlayers = 1;
+	private Player operator;
+	private Player activeTurn;
+	private int round;
 
-	Game(int noOfPlayers) {
-		this.noOfPlayers = noOfPlayers;
-		this.playerArr = new Player[noOfPlayers];
-		this.addPlayersSessions();
+	public Game(int noOfAi) {
+		this.noOfPlayers = this.noOfPlayers += noOfAi;
+		this.playerList = new Player[this.noOfPlayers];
+		this.round = 0;
 		this.init();
 	}
 
 	public void init() {
 		// add players to game 
-		this.addAllPlayers();
-
-			while (!gameover) {
-				this.getRound(); // print round number to cmdl
-				this.selectRandomPlayer();
-
-			// ----------------------------------------------------
-			// Add your game logic here based on the requirements
-			// ----------------------------------------------------
-			
-
-			gameover=true; // use this when the user wants to exit the game
-			
-		}
+		this.addPlayersToGame();
+		this.activeTurn = this.selectRandomPlayer();
 	}
 
-	private Player[] addPlayersSession() {
+	private void addPlayersToGame() {
 		// adds list of Player objects to our Player array
-		for() {
-			this.playerArr[i] = new Player();
+		int len = this.playerList.length;
+		for(int i = 0; i < len; i++) {
+			this.playerList[i] = new Player();
 		}
+		// assign Player object to the game operator
+		this.operator = this.playerList[0];
 	}
 
-	private void addPlayersSessions() {
+	public int getRound() {
+		return this.round;
 	}
 	
-	private void addAllPlayers() {
+	public void setRound(int n) {
+		this.round = n;
+	}
+
+	public Player getOperator() {
+		return this.operator;
+	}
+
+	public Player getActiveTurn() {
+		return this.activeTurn;
 	}
 	
-	
-	private int getRound() {
-		
+	public int getNoOfPlayers() {
+		return this.noOfPlayers; 
 	}
 	
-	private Player selectRandomPlayer() {
-		// gets a random number between 0 and max no of players
-		// int randomNo = ( (int) (Math.random() ); 
-		Player selected = Player[randomNo];
-		return selected; 
+	public Player[] getPlayerList() {
+		return this.playerList;
+	}
+	
+	public Player selectRandomPlayer() {
+		int ran = (int) Math.floor(Math.random() * this.playerList.length);
+		return this.playerList[ran];
+	}
+	
+	public Player getPlayer(int query) {
+		  Player matched = null;
+	        for(Player p : this.playerList ) {
+	            if(p == null) continue;
+	            if(p.getIdentity() == query) {
+	                matched = p;
+	                break;
+	            }
+	        }
+	        return matched;
 	}
 
 }

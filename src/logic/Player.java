@@ -1,5 +1,7 @@
-public class Player {
+package logic;
 
+public class Player {
+ 
 	public static int counter = 0; // static variable
 	private int identity;
 
@@ -27,8 +29,8 @@ public class Player {
 
 		Player[] playerList = new Player[3];
 		playerList[0] = ai1;
-		playerList[1] = ai2;
-		playerList[2] = human;
+		playerList[1] = human;
+		playerList[2] = ai2;
 
 		for(int i = 0; i < playerList.length;i++) {
 			Player otherPlayer = playerList[i];
@@ -37,6 +39,11 @@ public class Player {
 			}
 		}
 
+	}
+
+	public Card getCurrentCard() {
+		// return top card in deck
+		return null;
 	}
 
 }
