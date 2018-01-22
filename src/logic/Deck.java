@@ -88,7 +88,7 @@ public class Deck {
 		
 		return subDecks;
 	}
-
+/*
 	public static void main(String[] args) {
 		
 		Deck testDeck = new Deck();
@@ -126,14 +126,14 @@ public class Deck {
 		
 		System.out.println(testDeck.getDeckList());
 		
-		/*Deck[] newDecks = testDeck.split(3);
+		Deck[] newDecks = testDeck.split(3);
 		for (Deck d: newDecks)
 		{
 			System.out.println(d.getDeckSize());
 			System.out.println(d.getDeckList());
 			
-		}*/
 		}
+		}*/
 	
 	public String getDeckList()
 	{
