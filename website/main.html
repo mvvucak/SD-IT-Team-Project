@@ -16,15 +16,17 @@
     <div class="row">
       <div class="col-md-12">
         <div id="top-bar">
-          <div id="buttonst">
-            <button id="1" onClick="getAiNum(this.id)">1 AI player</button>
-            <button id="2" onClick="getAiNum(this.id)">2 AI players</button>
-            <button id="3" onClick="getAiNum(this.id)">3 AI players</button>
-            <button id="4" onClick="getAiNum(this.id)">4 AI players</button>
+          <div>
+            <div id="playBtns" class="btn-lg">
+              <!-- change this onclick -->
+              <button id="1" class="btn-lg" onclick="getAiNum(this.id)">1 AI player</button>
+              <button id="2" class="btn-lg" onclick="getAiNum(this.id)">2 AI players</button>
+              <button id="3" class="btn-lg" onclick="getAiNum(this.id)">3 AI players</button>
+              <button id="4" class="btn-lg" onclick="getAiNum(this.id)">4 AI players</button>
+            </div>
           </div>
-          <h1>Round #<h1>
-          <h2>It is PLAYER turn</h2>
-          <button onclick="printAiCard()">play</button>
+          <h1 id="roundHeader"></h1>
+          <h2 id="turnDisplay"></h2>
           </div>
         </div>
       </div>
@@ -34,49 +36,55 @@
             <h2>YOUR CURRENT CARD</h2>
             <h5>SPACESHIP NAME</h5>
           </div>
+        </div>
 
-          <div class="btn-group">
-            <button id="btn-lg" onclick="btnPress()">SIZE<br>(#)</button>
+          <div id="btn-group" onclick="printAiCard()">
+            <button class="btn-lg" onclick="this.disabled=true;">SIZE<br>(#)</button>
             <button class="btn-lg">SPEED<br>(#)</button>
             <button class="btn-lg">RANGE<br>(#)</button>
             <button class="btn-lg">FIREPOWER<br>(#)</button>
             <button class="btn-lg">CARGO<br>(#)</button>
           </div>
 
-          <div class="col-md-3">
+        </div>
+
+        <div class="grid-container">
+          <div id="col-md-3">
               <div id="card-info">
-                <h4 id="AI">AI #</h4>
-                <h5>spaceship name</h5>
-                <p>size #<br>speed #<br>range #<br>firepower #<br>cargo #<br></p>
+                <div id="aiNum1"></div>
+                <div id="slot1"></div>
               </div>
           </div>
 
-<!--           <div class="col-md-3">
+
+          <div id="col-md-3">
               <div id="card-info">
-              <h4>AI #</h4>
-              <p>size<br>speed<br>range<br>firepower<br>cargo<br></p>
+                <div id="aiNum2"></div>
+                <div id="slot2">
+                </div>
               </div>
           </div>
 
-          <div class="col-md-3">
+          <div id="col-md-3">
               <div id="card-info">
-              <h4>AI #</h4>
-              <p>size<br>speed<br>range<br>firepower<br>cargo<br></p>
+                <div id="aiNum3"></div>
+                <div id="slot3">
+                </div>
               </div>
           </div>
 
-          <div class="col-md-3">
+          <div id="col-md-3">
               <div id="card-info">
-              <h4>AI #</h4>
-              <p>size<br>speed<br>range<br>firepower<br>cargo<br></p>
+                <div id="aiNum4"></div>
+                <div id="slot4">
+                </div>
               </div>
           </div>
-         </div> -->
-
+        </div>
 
     <div class="row">
-        <div id="game-end">
-          <button class="btn-lg" onClick="highlightWinner('AIone')">SHOW WINNER</button>
+        <div id="round-end">
+          <button class="btn-lg" id="aa" onclick="nextRound();highlightWinner();">SHOW WINNER</button>
         </div>
       </div>
 
@@ -92,4 +100,4 @@
     <script type="text/javascript" src="javascript/script.js"></script>
 
   </body>
-</html
+</html>

@@ -20,7 +20,7 @@
 }
 
 body {
-  background-color: #fcfaef;
+  background-color: #fbf8ea;
   max-width: 100%;
 }
 
@@ -50,42 +50,60 @@ body {
   padding-bottom: 2%;
 }
 
-.col-md-3 {
-  margin-left: 15%;
-  display: inline-block;
-  padding: 5% 3% 5% 0%;
+#playBtns {
+  padding-left: 32%;
+}
+
+#col-md-3 {
+  text-align: right;
+/*  margin: 0 75% 0 15%;
+  padding: 3% 0 3% 0;*/
 }
 
 #card-info {
-  border-style: 2px solid black;
+  border-style: solid;
+  box-shadow: 5px 10px #888888;
+  font-size: 25px;
+  padding: 10%;
 }
 
-.btn-group {
-  padding: 0% 25% 0% 25%;
+.grid-container {
+  display: grid;
+  grid-template-columns: 20% 20% 20% 20%;
+  margin-left: 25%;
+  padding: 5% 10% 5% 0%;
 }
 
-#btn-lg {
-  padding: 10px 20px 10px 20px;
-  font-size: 20px;
-  border-radius: 10px;
+#btn-group {
+  padding-left: 37%;
+}
+
+/*#btn-group {
+  background-color: black;
+  cursor: not-allowed;
+}*/
+
+.btn-lg:disabled {
+  opacity: 0.65;
+  background-color: black;
 }
 
 .btn-lg {
   padding: 10px 20px 10px 20px;
   font-size: 20px;
   border-radius: 10px;
+  margin: 1% 0 1% 0;
 }
 
-h2 {
+/*h2 {
   text-align: center;
   font-size: 40px;
   padding: 0 0 2% 0;
-}
+}*/
 
-#game-end {
+#round-end {
   background-color: #e1fcb8;
   text-align: center;
-  text-transform: lowercase;
   font-size: 25px;
   width: 75%;
 }
@@ -93,21 +111,13 @@ h2 {
 #stats-btn {
   text-algn: center;
   background-color: DarkOliveGreen;
-  padding: 1% 1% 1% 1%;
+  padding-left: 42%;
   width: 100%;
 }
 
-.col-md-6 {
-  margin: 0 5% 0 20%;
-  text-align: center;
-  font-size: 40px;
-}
 
-.col-md-6 h3{
-  padding: 15%;
-}
 
-#hWin {
+/*#hWin {
   color: black;
   border-style: solid;
 }
@@ -115,6 +125,6 @@ h2 {
 #numRounds {
   color: black;
   border-style: solid;
-}
+}*/
 
 /*# sourceMappingURL=bootstrap.css.map */

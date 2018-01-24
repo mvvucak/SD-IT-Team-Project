@@ -24,6 +24,7 @@
     	
     	<div class="container">
 		<h1>Game Selection Screen</h1>
+		<h2>{{gameName}}</h2>
 		</div>
 		
 		<script type="text/javascript">

@@ -1,6 +1,7 @@
 package online.dwViews;
 
 import io.dropwizard.views.View;
+import logic.Game;
 
 /**
  * Each HTML page that is specified in GameWebPagesResource first needs a class that extends

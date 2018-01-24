@@ -25,6 +25,7 @@ public class TopTrumpsCLIApplication {
 			// Add your game logic here based on the requirements
 			// ----------------------------------------------------
 			
+
 			userWantsToQuit=true; // use this when the user wants to exit the game
 			
 		}
