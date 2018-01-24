@@ -4,6 +4,7 @@ public class Card implements Comparable<Card>{
 	private String description;
 	private int[] cat = new int[5]; 
 	public static int indexToCompare;
+	public static String[] catNames = {"size", "speed", "range", "firepower", "cargo"};
 	
 	//default constructor
 	public Card(String desc) {
@@ -32,22 +33,39 @@ public class Card implements Comparable<Card>{
 		this.description = description;
 	}
 
-
+	/**
+	 * Finds the category with the highest value for this card.
+	 * @return The name of the category with the highest value.
+	 */
+	public String getHighest()
+	{
+		int max = 0;
+		int maxIndex = 0;
+		for (int i=0; i < 5; i++)
+		{
+			if(this.cat[i] > max)
+			{
+				max = this.cat[i];
+				maxIndex = i;
+			}	
+		}
+		return Card.catNames[maxIndex];
+	}
 
 
 
 	// a method to return the right value by the category
 	public int getRelevantCat (String category) {
 		int b = -1;
-		if (category.equals("size")) 
+		if (category.equalsIgnoreCase(catNames[0])) 
 			return cat[0];
-		else if (category.equals("speed")) 
+		else if (category.equalsIgnoreCase(catNames[1])) 
 			return cat[1];
-		else if (category.equals("range")) 
+		else if (category.equalsIgnoreCase(catNames[2])) 
 			return cat[2];
-		else if (category.equals("firepower")) 
+		else if (category.equalsIgnoreCase(catNames[3])) 
 			return cat[3];
-		else if (category.equals("cargo")) 
+		else if (category.equalsIgnoreCase(catNames[4])) 
 			return cat[4];
 		else
 			return b;

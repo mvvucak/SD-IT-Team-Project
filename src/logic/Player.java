@@ -1,15 +1,49 @@
 package logic;
 
-public class Player {
+public abstract class Player {
  
 	public static int counter = 0; // static variable
-	private boolean active; // check if still playing 
-	private int identity;
+	protected boolean active; // check if still playing 
+	protected int identity;
+	protected Deck deck;
+	protected Card currentCard;
 
-	Player() {
+	Player(Deck d) {
+		deck = d;
 		this.active = true;
 		this.identity = Player.counter;
 		Player.counter += 1;
+	}
+	
+	public abstract boolean isHuman();
+	
+	public abstract String chooseCategory();
+	
+	/**
+	 * Removes the top card from the player's deck and adds it to their hand.
+	 */
+	public void drawCard()
+	{
+		this.currentCard = deck.drawTopCard();
+	}
+	
+	/**
+	 * Returns the details of the card currently in the player's hand.
+	 * @return A formatted string containing card details.
+	 */
+	public String showCurrentCard()
+	{
+		return this.currentCard.printCard();
+	}
+	/**
+	 * Prints out the details of the card currently in the player's hand.
+	 * Alternative to showCurrentCard, one will be deleted when done.
+	 */
+	public void printCurrentCard()
+	{
+		String cardDetails = this.currentCard.printCard();
+		System.out.println("You drew: ");
+		System.out.println(cardDetails);
 	}
 
 	public boolean activePlayer(Player otherPerson) {
@@ -30,7 +64,7 @@ public class Player {
 
 	/**
 	* main method to test Player class 
-	*/
+	
 	public static void main(String[] args) {
 	 	System.out.println( "testing Player class.." );
 		Player human = new Player();
@@ -49,11 +83,11 @@ public class Player {
 			}
 		}
 
-	}
+	}*/
 
 	public Card getCurrentCard() {
 		// return top card in deck
-		return null;
+		return this.currentCard;
 	}
 
 }
