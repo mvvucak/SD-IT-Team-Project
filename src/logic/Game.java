@@ -3,8 +3,6 @@ package logic;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import online.TopTrumpsOnlineApplication;
-
 import java.io.*;
 
 public class Game {
@@ -20,8 +18,9 @@ public class Game {
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.round = 1;
-		this.mainDeck = new Deck();
-		System.out.println(mainDeck.getDeckSize());
+		boolean pleaseShuffle = true;
+		Card[] pack = this.loadDeck();
+		this.mainDeck = new Deck(pack, pleaseShuffle);
 		this.init();
 	}
 
@@ -31,9 +30,19 @@ public class Game {
 		// selects random player to start game
 		this.currentPlayerTurn = this.selectRandomPlayer();
 		this.loadDeck();
+		this.allocateCardsToPlayer();
 	}
-
-	private void loadDeck() {
+	
+	private void allocateCardsToPlayer() {
+		Deck[] splitCards = this.mainDeck.split(this.noOfPlayers);
+		for(int i = 0; i < this.noOfPlayers; i++ ) {
+			playerList[i].setDeck(splitCards[i]); 
+			System.out.println("Player: " + playerList[i].getName() + " have cards " + playerList[i].getDeck().toString() );
+		}
+	}
+	
+	private Card[] loadDeck() {
+	 	Card[] topTrumpsPack = new Card[Deck.MAXIMUM_DECK_SIZE];
 		String filename = "StarCitizenDeck.txt";
 		try {
 			FileReader reader = new FileReader(filename); 
@@ -43,10 +52,8 @@ public class Game {
 			for(int i = 0; i < Card.catNames.length; i++) {
 				Card.catNames[i] = scan.next();
 			}
-			
 			System.out.println(Arrays.toString(Card.catNames));
-			
-			int pos = 0;
+			int index = 0;
 			 while (scan.hasNext()) {
 					int[] values = new int[Card.catNames.length];
 				    String desc = scan.next();
@@ -55,17 +62,18 @@ public class Game {
 				    values[2] = scan.nextInt();
 				    values[3] = scan.nextInt();
 				    values[4] = scan.nextInt();
-				    mainDeck.addCardToTop(new Card(desc, values));
-				    pos++;
+				    topTrumpsPack[index] = new Card(desc, values);
+				    index++;
 			  }
+			 scan.close();
 		} catch(IOException e) {
 			
 		}
-		//System.out.println(mainDeck.getDeckSize());
-		System.out.println(mainDeck.getDeckList());
-		System.out.println(mainDeck.getDeckDetails());
-		
+	    System.out.println(topTrumpsPack[7].getDescription());
+
+		return topTrumpsPack; 
 	}
+
 
 	private void addPlayersToGame() {
 		// assign Player object to the game operator

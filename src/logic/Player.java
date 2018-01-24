@@ -36,6 +36,14 @@ public abstract class Player {
 		this.currentCard = deck.drawTopCard();
 	}
 	
+	public void setDeck(Deck val) {
+		 this.deck = val;
+	}
+	
+	public Deck getDeck() {
+		return this.deck;
+	}
+	
 	/**
 	 * Returns the details of the card currently in the player's hand.
 	 * @return A formatted string containing card details.

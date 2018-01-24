@@ -1,20 +1,24 @@
 package logic;
 
+import java.util.Arrays;
+
 public class Deck {
 
 	private Card[] cards;
-	private int deckSize;
+	private int deckSize; // no of cards in current deck 
 	public static final int MAXIMUM_DECK_SIZE = 40;
 	
 	
 	Deck()
 	{
 		this.cards = new Card[MAXIMUM_DECK_SIZE];
-		deckSize = 0;
+		this.deckSize = 0;
 	}
 	
-	Deck(Card[] c) {
+	Deck(Card[] c, boolean shuffle) {
 		this.cards = c;
+		this.deckSize = c.length;
+		if(shuffle) this.shuffle();
 	}
 	
 	/**
@@ -69,8 +73,9 @@ public class Deck {
 		//For each card in the big deck
 		for(int i = 0; i<deckSize; i++)
 		{
+			System.out.println("pos " + i);
 			//Add the card to the current sub deck in the cycle
-			Card cardToAdd = cards[i];
+			Card cardToAdd = this.cards[i];
 			subDecks[whichDeck].addCardToTop(cardToAdd);
 			
 			//Then go to the next sub deck in the cycle for the next loop.
@@ -163,10 +168,11 @@ public class Deck {
 	 */
 	public void addCardToTop(Card c)
 	{
-		cards[deckSize] = c;
+		System.out.println(this.cards.length + " no of cards " + this.deckSize);
+		this.cards[deckSize] = c;
 
 		//Increment deck size to register addition of a card.
-		deckSize++;
+		this.deckSize++;
 	}
 	
 	/**
@@ -260,6 +266,18 @@ public class Deck {
 	public Card getSpecificCard (int index)
 	{
 		return cards[index];
+	}
+	
+	public String toString() {
+		String output = "[";
+		for(int i = 0; i < this.cards.length; i++) {
+			if(this.cards[i] == null) continue;
+			output += "\'";
+			output += this.cards[i].getDescription();
+			output += "\', ";
+		}
+		 	output += "]";
+		return output;
 	}
 
 }

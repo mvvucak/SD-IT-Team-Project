@@ -100,15 +100,5 @@ public class TopTrumpsRESTAPI {
 		 Game game = Session.createNewGame(aiSelect);
 		 return oWriter.writeValueAsString(game);
 	}
-	
-	@POST
-	@Path("/game/{selection}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public String createGameSession(@QueryParam("aiselect") int cat ) throws IOException {
-			VPlayer.chooseCategory(); // return int
-		 X oWriter.writeValueAsString(game);
-	}
-	
-	
-	
+		
 }

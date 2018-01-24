@@ -20,7 +20,7 @@ public class TopTrumpsCLIApplication {
 		
 		// Loop until the user wants to exit the game
 		while (!userWantsToQuit) {
-			if(player == true )
+	
 			// ----------------------------------------------------
 			// Add your game logic here based on the requirements
 			// ----------------------------------------------------
