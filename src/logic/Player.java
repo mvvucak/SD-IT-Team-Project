@@ -3,9 +3,11 @@ package logic;
 public class Player {
  
 	public static int counter = 0; // static variable
+	private boolean active; // check if still playing 
 	private int identity;
 
 	Player() {
+		this.active = true;
 		this.identity = Player.counter;
 		Player.counter += 1;
 	}
@@ -16,6 +18,14 @@ public class Player {
 
 	public int getIdentity() {
 		return this.identity;
+	}
+	
+	public boolean getActiveStatus() {
+		return this.active;
+	}
+	
+	public void setActiveStatus(boolean val) {
+		this.active = val;
 	}
 
 	/**
