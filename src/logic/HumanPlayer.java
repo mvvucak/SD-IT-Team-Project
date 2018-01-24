@@ -12,14 +12,28 @@ public final class HumanPlayer extends Player {
 		super(d);
 	}
 
-	
+	/**
+	 * @return Whether the player is human or not.
+	 */
 	public boolean isHuman() 
 	{
 		// TODO Auto-generated method stub
 		return true;
+	}	
+	
+	/**
+	 * Returns the player's identity, always "You" for a human player.
+	 * @return The player's name.
+	 */
+	public String getName()
+	{
+		return "You";
 	}
 
-
+	/**
+	 * Asks the user to choose the category to compare cards against
+	 * @return The name of the chosen category.
+	 */
 	public String chooseCategory() 
 	{
 		System.out.println("1. Size");
@@ -30,7 +44,6 @@ public final class HumanPlayer extends Player {
 		
 		int category = 0;
 		Scanner in = new Scanner(System.in);
-		
 		
 		while(category < 1 || category > 5)
 		{
