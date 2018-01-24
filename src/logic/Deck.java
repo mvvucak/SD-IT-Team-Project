@@ -140,12 +140,20 @@ public class Deck {
 		String cardList = "";
 		for(int i=0; i<deckSize; i++)
 		{
-			System.err.println(i);
 			cardList = String.format("%s %s %n", cardList, cards[i].getDescription());
 		}
-			
-		
 		return cardList;
+	}
+	
+	public String getDeckDetails()
+	{
+		String cardDetails = "";
+		
+		for(int i=0; i<deckSize; i++)
+		{
+			cardDetails = String.format("%s %s %n", cardDetails, cards[i].printCard());
+		}
+		return cardDetails;
 	}
 	
 	
@@ -156,6 +164,7 @@ public class Deck {
 	public void addCardToTop(Card c)
 	{
 		cards[deckSize] = c;
+
 		//Increment deck size to register addition of a card.
 		deckSize++;
 	}
