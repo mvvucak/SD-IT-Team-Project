@@ -15,9 +15,18 @@ public abstract class Player {
 		Player.counter += 1;
 	}
 	
+	Player()
+	{
+		this.active = true;
+		this.identity = Player.counter;
+		Player.counter += 1;
+	}
+	
 	public abstract boolean isHuman();
 	
 	public abstract String chooseCategory();
+	
+	public abstract String getName();
 	
 	/**
 	 * Removes the top card from the player's deck and adds it to their hand.

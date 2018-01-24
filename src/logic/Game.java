@@ -1,12 +1,15 @@
 package logic;
 
+import java.io.*;
+import java.util.Scanner;
+
 public class Game {
 	
 	private int noOfPlayers = 1;
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
-	private int currentPlayerTurn;
-	private int round;
+	private int currentPlayerTurn, round, draws;
+	private Deck mainDeck;
 
 	public Game(int noOfAi) {
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
@@ -23,13 +26,20 @@ public class Game {
 	}
 
 	private void addPlayersToGame() {
-		// adds list of Player objects to our Player array
+		// Create human player and add them start of Player Array
+		this.operator = new HumanPlayer();
+		this.playerList[0] = this.operator;
+		
+		//Populate remainder of Player array with Computer Players.
 		int len = this.playerList.length;
-		for(int i = 0; i < len; i++) {
-			this.playerList[i] = new Player();
+		for(int i = 1; i < len; i++) {
+			this.playerList[i] = new ComputerPlayer();
 		}
-		// assign Player object to the game operator
-		this.operator = this.playerList[0];
+	}
+	
+	public void loadDeck()
+	{
+		
 	}
 
 	public int getRound() {

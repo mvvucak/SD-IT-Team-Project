@@ -11,6 +11,11 @@ public final class HumanPlayer extends Player {
 	{
 		super(d);
 	}
+	
+	public HumanPlayer()
+	{
+		super();
+	}
 
 	/**
 	 * @return Whether the player is human or not.

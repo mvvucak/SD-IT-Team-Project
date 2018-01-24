@@ -4,7 +4,7 @@ public class Card implements Comparable<Card>{
 	private String description;
 	private int[] cat = new int[5]; 
 	public static int indexToCompare;
-	public static String[] catNames = {"size", "speed", "range", "firepower", "cargo"};
+	public static String[] catNames = {"Size", "Speed", "Range", "Firepower", "Cargo"};
 	
 	//default constructor
 	public Card(String desc) {

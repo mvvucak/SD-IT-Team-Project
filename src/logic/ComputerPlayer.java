@@ -6,6 +6,11 @@ public final class ComputerPlayer extends Player {
 	{
 		super(d);
 	}
+	
+	public ComputerPlayer()
+	{
+		super();
+	}
 
 	@Override
 	/**
