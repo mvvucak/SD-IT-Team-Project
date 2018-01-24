@@ -2,23 +2,24 @@ package logic;
 
 public class Game {
 	
-	private Player[] playerList;
 	private int noOfPlayers = 1;
-	private Player operator;
-	private Player activeTurn;
+	private Player[] playerList;
+	private Player operator; // ref to the person playing
+	private int currentPlayerTurn;
 	private int round;
 
 	public Game(int noOfAi) {
-		this.noOfPlayers = this.noOfPlayers += noOfAi;
+		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
-		this.round = 0;
+		this.round = 1;
 		this.init();
 	}
 
 	public void init() {
-		// add players to game 
+		// build a playerList 
 		this.addPlayersToGame();
-		this.activeTurn = this.selectRandomPlayer();
+		// selects random player to start game
+		this.currentPlayerTurn = this.selectRandomPlayer();
 	}
 
 	private void addPlayersToGame() {
@@ -43,8 +44,8 @@ public class Game {
 		return this.operator;
 	}
 
-	public Player getActiveTurn() {
-		return this.activeTurn;
+	public int getCurrentPlayerTurn() {
+		return this.currentPlayerTurn;
 	}
 	
 	public int getNoOfPlayers() {
@@ -55,11 +56,28 @@ public class Game {
 		return this.playerList;
 	}
 	
-	public Player selectRandomPlayer() {
+	public int selectRandomPlayer() {
 		int ran = (int) Math.floor(Math.random() * this.playerList.length);
-		return this.playerList[ran];
+		return ran;
 	}
 	
+	public void switchTurn() {
+
+		for(int i = 0; i < playerList.length; i++) {
+			this.currentPlayerTurn++;
+			int playerIndex = this.currentPlayerTurn % playerList.length;
+
+			if(this.playerList[playerIndex].getActiveStatus()) {
+				this.currentPlayerTurn = playerIndex; 
+				break;
+			} 
+			continue;
+
+		} 
+		System.out.println("New turn " + this.currentPlayerTurn);
+	}
+	
+
 	public Player getPlayer(int query) {
 		  Player matched = null;
 	        for(Player p : this.playerList ) {
@@ -70,6 +88,24 @@ public class Game {
 	            }
 	        }
 	        return matched;
+	}
+	
+	public static void main(String[] args) {
+		Game testCase = new Game(4); 
+		System.out.println("the current player" + testCase.currentPlayerTurn);
+		testCase.switchTurn();
+		testCase.switchTurn();
+		testCase.switchTurn();
+		testCase.switchTurn();
+		testCase.switchTurn();
+		System.out.println("Now I have turned human to off");
+		testCase.operator.setActiveStatus(false);
+		testCase.switchTurn();
+		testCase.switchTurn();
+		testCase.switchTurn();
+		testCase.switchTurn();
+		testCase.switchTurn();
+		testCase.switchTurn();
 	}
 
 }
