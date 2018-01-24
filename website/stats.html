@@ -5,9 +5,13 @@
   <meta charset="UTF-8">
   <title>Top Trumps</title>
 
-    <link rel="stylesheet" href="css/bootstrap.css">
+  <!-- Bootstrap 4 -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="javascript/data.js"></script>
+
 </head>
 
   <body>
@@ -16,18 +20,38 @@
     <div class="row">
       <div class="col-md-12">
         <div id="top-bar">
-          <h1>Total # of wins<h1>
+          <h1 id="top">Total # of wins</h1>
         </div>
       </div>
     </div>
-
+  <div class="row">
     <div class="col-md-6">
-      <h3>Human wins<h3>
+      <h3>Human wins</h3>
+        <p>#</p>
       <h3>AI wins</h3>
+        <p>#</p>
     </div>
 
     <div class="col-md-6">
-      <h3># of draws<h3>
-      <h3>Highest # of rounds</h3>
+      <h3>Total draws</h3>
+        <p>#</p>
+      <h3>Most rounds</h3>
+        <p>#</p>
     </div>
+<<<<<<< HEAD
 
+</div>
+</div>
+</body>
+=======
+  </div>
+    <script type="text/javascript">
+    console.log(globalData);
+    var element = document.querySelector('#hWin');
+    console.log(element);
+    var allGameStats = JSON.stringify(globalData);
+    element.innerHTML = allGameStats;
+  </script>
+  </body>
+>>>>>>> 9fc3082a3f76bc447b051d64dd285fcfc08ad7c4
+</html>

@@ -1,6 +1,7 @@
 package online.dwViews;
 
 import io.dropwizard.views.View;
+import logic.Game;
 
 /**
  * Each HTML page that is specified in GameWebPagesResource first needs a class that extends
@@ -15,7 +16,6 @@ import io.dropwizard.views.View;
  * however we do not expect you to use the additional functionality that freemarker provides.
  */
 public class GameScreenView extends View {
-
 	/**
 	 * Simple Constructor method, it simply specifies where the HTML page is to return.
 	 */

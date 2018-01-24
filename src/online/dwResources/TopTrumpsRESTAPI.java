@@ -6,7 +6,9 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -15,6 +17,8 @@ import online.configuration.TopTrumpsJSONConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+
+import logic.*;
 
 @Path("/toptrumps") // Resources specified here should be hosted at http://localhost:7777/toptrumps
 @Produces(MediaType.APPLICATION_JSON) // This resource returns JSON content
@@ -34,7 +38,8 @@ public class TopTrumpsRESTAPI {
 	/** A Jackson Object writer. It allows us to turn Java objects
 	 * into JSON strings easily. */
 	ObjectWriter oWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
-	
+	private final int availableAI;
+	private final String deckName;
 	/**
 	 * Contructor method for the REST API. This is called first. It provides
 	 * a TopTrumpsJSONConfiguration from which you can get the location of
@@ -45,6 +50,9 @@ public class TopTrumpsRESTAPI {
 		// ----------------------------------------------------
 		// Add relevant initalization here
 		// ----------------------------------------------------
+		conf.getDeckFile();
+		this.availableAI = conf.getNumAIPlayers();
+		this.deckName = conf.getDeckFile();
 	}
 	
 	// ----------------------------------------------------
@@ -52,36 +60,45 @@ public class TopTrumpsRESTAPI {
 	// ----------------------------------------------------
 	
 	@GET
-	@Path("/helloJSONList")
+	@Path("/options")
 	/**
 	 * Here is an example of a simple REST get request that returns a String.
 	 * We also illustrate here how we can convert Java objects to JSON strings.
 	 * @return - List of words as JSON
 	 * @throws IOException
 	 */
-	public String helloJSONList() throws IOException {
-		
-		List<String> listOfWords = new ArrayList<String>();
-		listOfWords.add("Hello");
-		listOfWords.add("World!");
-		
-		// We can turn arbatory Java objects directly into JSON strings using
-		// Jackson seralization, assuming that the Java objects are not too complex.
-		String listAsJSONString = oWriter.writeValueAsString(listOfWords);
-		
-		return listAsJSONString;
+	public String gameOptionJSON() throws IOException {
+		Object[] optionsObj = {"gameName", this.deckName, "aiAvailable", this.availableAI};
+		String json = oWriter.writeValueAsString(optionsObj);
+		System.out.println(json);
+		return json;
 	}
 	
 	@GET
-	@Path("/helloWord")
+	@Path("/game/{gameid}/{playerid}/current")
 	/**
-	 * Here is an example of how to read parameters provided in an HTML Get request.
+	 * Fetches top facing card of a player's deck
 	 * @param Word - A word
 	 * @return - A String
 	 * @throws IOException
 	 */
-	public String helloWord(@QueryParam("Word") String Word) throws IOException {
-		return "Hello "+Word;
+	public Card getPlayerCurrentCard(@PathParam("gameid") int gameId, @PathParam("playerid") int playerId) throws IOException {
+        Game game = Session.findGameById(gameId);
+        Player player = game.getPlayer(playerId);
+        Card card = player.getCurrentCard();
+        return card;
+	}
+	
+	@POST
+	@Path("/game")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String createGameSession(@QueryParam("aiselect") int aiSelect ) throws IOException {
+	    // check validity of number 
+		// if x < y Send 400 error msg 
+		if(aiSelect > this.availableAI) return null;
+		// try and create new game session for user
+		 Game game = Session.createNewGame(aiSelect);
+		 return oWriter.writeValueAsString(game);
 	}
 	
 }
