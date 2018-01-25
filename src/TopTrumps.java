@@ -1,4 +1,5 @@
 import commandline.TopTrumpsCLIApplication;
+import logic.Session;
 import online.TopTrumpsOnlineApplication;
 
 public class TopTrumps {
@@ -23,6 +24,7 @@ public class TopTrumps {
 			
 		}
 		
+
 		// We cannot run online and command line mode simultaniously
 		if (onlineMode && commandLineMode) {
 			System.out.println("ERROR: Both online and command line mode selected, select one or the other!");

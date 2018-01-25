@@ -8,7 +8,7 @@ public class Session {
 	private static int counter = 1;
 	
 	private Session() {
-		
+		// Exists only to defeat instantiation
 	}
 	
 	public static Session getInstance() {
