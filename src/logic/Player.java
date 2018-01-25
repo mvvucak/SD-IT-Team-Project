@@ -24,8 +24,6 @@ public abstract class Player {
 	
 	public abstract boolean isHuman();
 	
-	public abstract String chooseCategory();
-	
 	public abstract String getName();
 	
 	/**
@@ -34,6 +32,15 @@ public abstract class Player {
 	public void drawCard()
 	{
 		this.currentCard = deck.drawTopCard();
+	}
+	
+	/**
+	 * Adds cards to the bottom of the player's deck when they win a round.
+	 * @param d A deck containing all claimed cards (min. 2).
+	 */
+	public void addWonCards(Deck d)
+	{
+		this.deck.addCardsToBottom(d);
 	}
 	
 	public void setDeck(Deck val) {
@@ -65,6 +72,14 @@ public abstract class Player {
 
 	public boolean activePlayer(Player otherPerson) {
 		return this.identity == otherPerson.getIdentity();
+	}
+	
+	/**
+	 * @return Whether the player has won (i.e. has all the cards in the game).
+	 */
+	public boolean hasWon()
+	{
+		return deck.isFull();
 	}
 
 	public int getIdentity() {

@@ -93,52 +93,14 @@ public class Deck {
 		
 		return subDecks;
 	}
-/*
-	public static void main(String[] args) {
-		
-		Deck testDeck = new Deck();
-		testDeck.addCardToTop(new Card("Blue"));
-		testDeck.addCardToTop(new Card("Green"));
-		testDeck.addCardToTop(new Card("Red"));
-		testDeck.addCardToTop(new Card("Purple"));
-		testDeck.addCardToTop(new Card("Cyan"));
-		testDeck.addCardToTop(new Card("Yellow"));
-		testDeck.addCardToTop(new Card("Pink"));
-		testDeck.addCardToTop(new Card("Teal"));
-		testDeck.addCardToTop(new Card("Orange"));
-		testDeck.addCardToTop(new Card("Brown"));
-		testDeck.addCardToTop(new Card("White"));
-		testDeck.addCardToTop(new Card("Black"));
-		testDeck.addCardToTop(new Card("Grey"));
-		testDeck.addCardToTop(new Card("Beige"));
-		testDeck.addCardToTop(new Card("Crimson"));
-		testDeck.addCardToTop(new Card("Scarlet"));
-		testDeck.addCardToTop(new Card("Violet"));
-		
-		
-		System.out.println(testDeck.getDeckList());
-		
-		testDeck.shuffle();
-		
-		System.out.println(testDeck.getDeckList());
-		
-		Deck deckToAdd = new Deck();
-		deckToAdd.addCardToTop(new Card("Maroon"));
-		deckToAdd.addCardToTop(new Card("Magenta"));
-		deckToAdd.addCardToTop(new Card("Ebony"));
-		
-		testDeck.addCardsToBottom(deckToAdd);
-		
-		System.out.println(testDeck.getDeckList());
-		
-		Deck[] newDecks = testDeck.split(3);
-		for (Deck d: newDecks)
-		{
-			System.out.println(d.getDeckSize());
-			System.out.println(d.getDeckList());
-			
-		}
-		}*/
+	
+	/**
+	 * Removes all cards from the deck.
+	 */
+	public void emptyDeck()
+	{
+		this.cards = new Card[MAXIMUM_DECK_SIZE];
+	}
 	
 	public String getDeckList()
 	{
@@ -228,6 +190,17 @@ public class Deck {
 	public Card getTopCard()
 	{
 		return cards[deckSize-1];
+	}
+	
+	/**
+	 * @return Whether the deck is full (i.e. contains all cards in the game).
+	 */
+	public boolean isFull()
+	{
+		if(deckSize == MAXIMUM_DECK_SIZE)
+			return true;
+		else
+			return false;
 	}
 	
 	public Card drawTopCard()

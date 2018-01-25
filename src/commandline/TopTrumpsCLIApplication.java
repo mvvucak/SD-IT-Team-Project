@@ -54,10 +54,10 @@ public class TopTrumpsCLIApplication {
 	
 	
 	/**
-	 * Asks the human user which category they would like to choose for a round
-	 * Only called when it is the human player's turn.
- 	 * @return The name of the chosen category. NOTE: can be changed to return the index of
- 	 * a category as an int.
+	 * Asks the user to choose the category to compare cards against for this round.
+	 * Only called when it is the human player's turn to choose.
+ 	 * @return The name of the chosen category. 
+ 	 * NOTE: can be changed to return the index of a category as an int.
 	 */
 	private String promptCategoryChoice()
 	{
@@ -86,8 +86,22 @@ public class TopTrumpsCLIApplication {
 		}
 		in.close();
 		
-		return Card.catNames[category-1];
+		return Card.catNames[category-1]; 
+		//May be better to return the number or index and let game logic handle category name.
 	}
+	
+	/**
+	 * Outputs a card's details to the console.
+ 	 * @param c The card to be printed, normally a player's current card.
+ 	 * NOTE: Method can be adjusted to take a Player or String as parameter later.
+ 	 * NOTE 2: Can be used to print out all players' cards at the end of a round too.
+	 */
+	private void printCard(Card c) 
+	{
+		System.out.println(c.printCard());
+	}
+	
+	
 	
 	private static boolean validChoice(int choice, int[] answers) {
 	    return ArrayUtils.contains(answers, choice);
