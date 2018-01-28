@@ -4,21 +4,23 @@ import java.util.Scanner;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import io.dropwizard.cli.Cli;
 import logic.*;
+import logic.Game.Round;
 
 /**
  * Top Trumps command line application
  */
-public class TopTrumpsCLIApplication {
+public class TopTrumpsCLIApplication extends View {
 
 	private static Game cliGame;
+	private static Scanner scan = new Scanner(System.in); 
 	/**
 	 * This main method is called by TopTrumps.java when the user specifies that they want to run in
 	 * command line mode. The contents of args[0] is whether we should write game logs to a file.
  	 * @param args
 	 */
 	public static void main(String[] args) {
-
 		boolean writeGameLogsToFile = false; // Should we write game logs to file?
 		if (args[0].equalsIgnoreCase("true")) writeGameLogsToFile=true; // Command line selection
 		
@@ -28,68 +30,40 @@ public class TopTrumpsCLIApplication {
 		displayOptionMenu();
 		// Loop until the user wants to exit the game
 		while (!userWantsToQuit) {
-			printToConsole("Round "+cliGame.getRound()+" has begun1");
-			// ----------------------------------------------------
-			// Add your game logic here based on the requirements
-			// ----------------------------------------------------
+			cliGame.play();
 			userWantsToQuit=true; // use this when the user wants to exit the game
-			
 		}
 
-
-	}
-	
-	private static void displayOptionMenu() {
-		Scanner scan = new Scanner(System.in); 
-		int choice;
-		int[] answers = {1,2}; 
-		do {
-			printToConsole("Would you like to View Statistics (1) of past games or Play a New Game (2)?");
-			choice = scan.nextInt();
-		} while(!validChoice(choice, answers));
-		if(choice == 2) cliGame = Session.createNewGame(4);
-		else if(choice == 1) printToConsole("Okay! Here are your statistics");
 		scan.close();
 	}
 	
-	
-	/**
-	 * Asks the user to choose the category to compare cards against for this round.
-	 * Only called when it is the human player's turn to choose.
- 	 * @return The name of the chosen category. 
- 	 * NOTE: can be changed to return the index of a category as an int.
-	 */
-	private String promptCategoryChoice()
-	{
-		System.out.println("1. Size");
-		System.out.println("2. Speed");
-		System.out.println("3. Range");
-		System.out.println("4. Firepower");
-		System.out.println("5. Cargo");
-		
-		int category = 0;
-		Scanner in = new Scanner(System.in);
-		
-		while(category < 1 || category > 5)
-		{
-			System.out.print("Choose a category: ");
-			String line = in.nextLine();
-			try
-			{
-				category = Integer.parseInt(line);
+	private static void displayOptionMenu() {
+		boolean hideMenu = false;
+		while(!hideMenu) {
+			int[] menuOptions = {1,2};
+			int choice = giveOptions(menuOptions, "Would you like to View Statistics (1) of past games or Play a New Game (2)?");
+			if(choice == 2) {
+				cliGame = Session.createNewGame(4);
+				hideMenu = true;
+			} else { if(choice == 1) 
+				printToConsole("Okay! Here are your statistics");
 			}
-			catch(NumberFormatException e)
-			{
-				System.out.println(line + " is not a valid input. Choose a number between 1 and 5.");
-			}
-			
 		}
-		in.close();
-		
-		return Card.catNames[category-1]; 
-		//May be better to return the number or index and let game logic handle category name.
 	}
 	
+	
+	private static int giveOptions(int[] answers, String msg) {
+		int countTries = 0;
+		int response;
+		do {
+			if( (countTries & 1) == 0) printToConsole(msg);
+			else printToConsole("Please Try again.");
+			countTries++;
+			response = scan.nextInt();
+		} while(!ArrayUtils.contains(answers, response));
+		return response;
+	}
+		
 	/**
 	 * Outputs a card's details to the console.
  	 * @param c The card to be printed, normally a player's current card.
@@ -102,13 +76,44 @@ public class TopTrumpsCLIApplication {
 	}
 	
 	
-	
-	private static boolean validChoice(int choice, int[] answers) {
-	    return ArrayUtils.contains(answers, choice);
-	}
-	
 	private static void printToConsole(String str) {
 		System.out.println(str);
+	}
+	
+	/**
+	 * Asks the user to choose the category to compare cards against for this round.
+	 * Only called when it is the human player's turn to choose.
+ 	 * @return The name of the chosen category. 
+ 	 * NOTE: can be changed to return the index of a category as an int.
+	 */
+	@Override
+	public int getCategory() {
+		printToConsole("1. Size");
+		printToConsole("2. Speed");
+		printToConsole("3. Range");
+		printToConsole("4. Firepower");
+		printToConsole("5. Cargo");
+		int[] answers = {1,2,3,4,5};
+		int cat = giveOptions(answers, "Please select the category you'd like to play..");
+		return cat;
+	}
+
+	@Override
+	public void displayEndRound(Round rnd) {
+		printToConsole("Selected Category " +  Card.catNames[rnd.getCategory()]);
+		if(rnd.getFinalResult() == 0 ) {
+			printToConsole("Result : It was a draw!");
+		} else {
+			printToConsole("Winning Player " + rnd.getWinner());
+		}
+		printToConsole("Winning Card : \n" + rnd.getWinningCard().printCard());
+	}
+
+	@Override
+	public void initalRoundInfo(Round rnd) {
+		printToConsole("Round : "+rnd.getRoundNumber());
+		printToConsole("Turn :" + rnd.getStartingPlayer().getName());
+		printToConsole(rnd.getStartingCard().printCard());
 	}
 
 }

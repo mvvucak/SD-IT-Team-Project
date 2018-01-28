@@ -31,14 +31,13 @@ public final class ComputerPlayer extends Player {
 		return name;
 	}
 
-	@Override
 	/**
 	 * Automatically chooses the category to compare against.
 	 * Choice is made based on the highest value on the AI's current card.
 	 * @return The name of the chosen category.
 	 */
-	public String chooseCategory() {
-		String bestCategory = this.currentCard.getHighest();
+	public int chooseCategory() {
+		int bestCategory = this.currentCard.getHighest();
 		return bestCategory;
 	}
 

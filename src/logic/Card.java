@@ -1,6 +1,6 @@
 package logic;
 
-public class Card implements Comparable<Card>{
+public class Card implements Comparable<Card> {
 	private String description;
 	private int[] cat = new int[5]; 
 	public static String[] catNames = {"Size", "Speed", "Range", "Firepower", "Cargo"};
@@ -42,7 +42,7 @@ public class Card implements Comparable<Card>{
 		 * Finds the category with the highest value for this card.		
 		 * @return The name of the category with the highest value.		
 		 */		
-		public String getHighest()		
+		public int getHighest()		
 		{		
 		int max = 0;		
 			int maxIndex = 0;		
@@ -54,7 +54,8 @@ public class Card implements Comparable<Card>{
 					maxIndex = i;		
 			}			
 		}		
-			return Card.catNames[maxIndex];		
+			
+			return maxIndex;		
 		}		
 			
 	
@@ -80,7 +81,10 @@ public class Card implements Comparable<Card>{
 	//a method to return the right value by the index
 	public int getRelevantCat(int index) {
 		return cat[index];
-		
+	}
+	
+	public int[] getCat() {
+		return this.cat;
 	}
 	
 	// a method to print out the card information
@@ -104,10 +108,16 @@ public class Card implements Comparable<Card>{
 		this.cat = cat;
 	}
 
-
+	
+	@Override
+	/**
+	 * zero: if x == y 
+	 * positive value: if x > y
+	 * negative value: if x < y
+	 */
 	public int compareTo(Card other) {
-		int forThis =this.getRelevantCat(indexToCompare);
-		int forThat =other.getRelevantCat(indexToCompare);
+		int forThis = this.getRelevantCat(indexToCompare);
+		int forThat = other.getRelevantCat(indexToCompare);
 		
 		if (forThis == forThat) 
 			return 0;
@@ -118,7 +128,7 @@ public class Card implements Comparable<Card>{
 
 	}
 
-	//
+
 	public static void main(String[] args)
 	{
 		indexToCompare = 1;

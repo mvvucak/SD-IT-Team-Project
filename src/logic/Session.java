@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public class Session {
 	private static HashMap<Integer, Game> gameList = new HashMap<Integer, Game>();  
+	public static View view;
 	private static Session instance = null;
 	private static int counter = 1;
 	
@@ -23,6 +24,10 @@ public class Session {
 		gameList.put(counter, newGame);
 		counter++;
 		return newGame;
+	}
+	
+	public static void setView(View playerView) {
+		view = playerView;
 	}
 
 	public static Game findGameById(int gameId) {

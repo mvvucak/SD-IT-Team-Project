@@ -2,27 +2,51 @@
 	"options": {
 		"aiAvailable": 4
 	},
-"stats": [
+"stats":
 	{
-	"gameId": 1,	
-	"moves": 44,
-	"ties-won": 22,
-	"draws-won": 33, 
-	"human-winner": true
+	"overallGames": 100,	
+	"computerWins": 44,
+	"humanWins": 22,
+	"averageDraws": 33, 
+	"mostAmountRounds": 66
+	},
+"players": [ 
+{
+	"identity": 11,
+	"name": "Human Player",
+	"active": true
+},
+{
+	"identity": 12,
+	"name": "Computer Player 1",
+	"active": true
+},
+{
+	"identity": 13,
+	"name": "Computer Player 2",
+	"active": false
+},
+{
+	"identity": 14,
+	"name": "Computer Player 3",
+	"active": false
+},
+{
+	"identity": 15,
+	"name": "Computer Player 4",
+	"active": true
+}
+],
+"round": { 
+	"catNames": [
+		"Size", "Speed", "Range", "Firepower", "Cargo"],
+	"cards": [{
+	"cat": [5, 7, 12, 4, 8],
+	"desc": "Avenger"
 	},
 	{
-	"gameId": 2,	
-	"moves": 87,
-	"ties-won": 22,
-	"draws-won": 77, 
-	"human-winner": false
-	},
-	{
-	"gameId": 3,	
-	"moves": 100,
-	"ties-won": 33,
-	"draws-won": 32, 
-	"human-winner": true
-	}
-]
+	"cat": [32, 3, 11, 9, 1],
+	"desc": "Carrack"
+	}]
+}
 }

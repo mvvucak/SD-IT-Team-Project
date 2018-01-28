@@ -26,6 +26,8 @@ public abstract class Player {
 	
 	public abstract String getName();
 	
+	public abstract int chooseCategory();
+	
 	/**
 	 * Removes the top card from the player's deck and adds it to their hand.
 	 */
@@ -70,7 +72,7 @@ public abstract class Player {
 		System.out.println(cardDetails);
 	}
 
-	public boolean activePlayer(Player otherPerson) {
+	public boolean comparePlayer(Player otherPerson) {
 		return this.identity == otherPerson.getIdentity();
 	}
 	
@@ -121,5 +123,6 @@ public abstract class Player {
 		// return top card in deck
 		return this.currentCard;
 	}
+
 
 }

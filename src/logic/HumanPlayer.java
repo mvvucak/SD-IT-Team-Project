@@ -1,5 +1,7 @@
 package logic;
 
+import javax.swing.text.View;
+
 public final class HumanPlayer extends Player {
 	
 	
@@ -28,4 +30,10 @@ public final class HumanPlayer extends Player {
 	{
 		return "You";
 	}
+
+	@Override
+	public int chooseCategory() {
+		return Session.view.getCategory();
+	}
+
 }

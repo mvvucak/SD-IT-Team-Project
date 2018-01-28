@@ -100,6 +100,7 @@ public class Deck {
 	public void emptyDeck()
 	{
 		this.cards = new Card[MAXIMUM_DECK_SIZE];
+		this.deckSize = 0;
 	}
 	
 	public String getDeckList()
@@ -130,7 +131,7 @@ public class Deck {
 	 */
 	public void addCardToTop(Card c)
 	{
-		System.out.println(this.cards.length + " no of cards " + this.deckSize);
+		// System.out.println(this.cards.length + " no of cards " + this.deckSize);
 		this.cards[deckSize] = c;
 
 		//Increment deck size to register addition of a card.
