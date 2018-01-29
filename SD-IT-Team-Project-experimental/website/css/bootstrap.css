@@ -1,0 +1,130 @@
+* {
+  font-family: 'Oswald', sans-serif;
+  margin: 0 auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media only screen and (max-width: 300px) {
+    p {
+        background-color: white;
+    }
+}
+
+.row {
+    width: 100%;
+    margin-bottom: 2%;
+    display: flex;
+}
+
+body {
+  background-color: #fbf8ea;
+  max-width: 100%;
+}
+
+.col-md-12 {
+  width: 75%;
+}
+
+.col-md-12 #top-bar {
+    background-color: DarkOliveGreen;
+    color: #f1f9e5;
+    text-align: left;
+}
+
+.col-md-12 h1 {
+    text-align: left;
+    font-size: 40px;
+}
+
+.col-md-12 h2 {
+    text-align: center;
+    font-size: 30px;
+}
+
+#card-header {
+  width: 60%;
+  text-align: center;
+  padding-bottom: 2%;
+}
+
+#playBtns {
+  padding-left: 32%;
+}
+
+#col-md-3 {
+  text-align: right;
+/*  margin: 0 75% 0 15%;
+  padding: 3% 0 3% 0;*/
+}
+
+#card-info {
+  border-style: solid;
+  box-shadow: 5px 10px #888888;
+  font-size: 25px;
+  padding: 10%;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 20% 20% 20% 20%;
+  margin-left: 25%;
+  padding: 5% 10% 5% 0%;
+}
+
+#btn-group {
+  padding-left: 37%;
+}
+
+/*#btn-group {
+  background-color: black;
+  cursor: not-allowed;
+}*/
+
+.btn-lg:disabled {
+  opacity: 0.65;
+  background-color: black;
+}
+
+.btn-lg {
+  padding: 10px 20px 10px 20px;
+  font-size: 20px;
+  border-radius: 10px;
+  margin: 1% 0 1% 0;
+}
+
+/*h2 {
+  text-align: center;
+  font-size: 40px;
+  padding: 0 0 2% 0;
+}*/
+
+#round-end {
+  background-color: #e1fcb8;
+  text-align: center;
+  font-size: 25px;
+  width: 75%;
+}
+
+#stats-btn {
+  text-algn: center;
+  background-color: DarkOliveGreen;
+  padding-left: 42%;
+  width: 100%;
+}
+
+
+
+/*#hWin {
+  color: black;
+  border-style: solid;
+}
+
+#numRounds {
+  color: black;
+  border-style: solid;
+}*/
+
+/*# sourceMappingURL=bootstrap.css.map */
