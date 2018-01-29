@@ -122,10 +122,9 @@ public class Card implements Comparable<Card> {
 		if (forThis == forThat) 
 			return 0;
 		else if (forThis > forThat)
-			return 1;
-		else 
 			return -1;
-
+		else 
+			return 1;
 	}
 
 

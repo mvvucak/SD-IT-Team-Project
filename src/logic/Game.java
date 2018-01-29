@@ -48,7 +48,6 @@ public class Game {
 		Deck[] splitCards = this.mainDeck.split(this.noOfPlayers);
 		for(int i = 0; i < this.noOfPlayers; i++ ) {
 			playerList[i].setDeck(splitCards[i]); 
-			//System.out.println("Player: " + playerList[i].getName() + " have cards " + playerList[i].getDeck().toString() );
 		}
 	}
 	
@@ -111,7 +110,7 @@ public class Game {
 	 */
 	private boolean processWonRound(Player winner)
 	{
-		winner.addWonCards(this.mainDeck); //Assuming mainDeck will hold each round's cards -Mat.
+		winner.addWonCards(this.mainDeck); //Assuming mainDeck will hold each round's cards Yes -Mat.
 		//Remove card references from the common pile.
 		this.mainDeck.emptyDeck(); 
 		//Assuming identity and index in player array are identical. -Mat.
@@ -128,33 +127,54 @@ public class Game {
 	 */
 	
 	private int findRoundResult(Round rnd) {
-		  final int LOSS = -1;
-		  final int DRAW = 0;
-		  final int WIN = 1;
-		  int categoryChoice = rnd.getCategory();
-		int myCard = rnd.getStartingCard().getRelevantCat(categoryChoice);
-		for(int i = 0; i < this.playerList.length; i++) {
-			if(i == this.currentPlayerTurn) continue;
-			Player opponent = playerList[i];
-			int opponentsCard = opponent.getCurrentCard().getRelevantCat(categoryChoice);
-			int comparedResult = Integer.compare(myCard, opponentsCard);
-			if(comparedResult == 0) {
-				rnd.setFinalResult(DRAW);
-				rnd.setWinner(opponent);
-				rnd.setWinningCard(opponent.getCurrentCard());
-				return DRAW;
-			} else if(comparedResult < 0) {
-				rnd.setFinalResult(LOSS);
-				rnd.setWinner(opponent);
-				rnd.setWinningCard(opponent.getCurrentCard());
-				return LOSS;
+//		  final int LOSS = -1;
+//		  final int DRAW = 0;
+//		  final int WIN = 1;
+//		  int result = 0;
+//		  int categoryChoice = rnd.getCategory();
+//		int myCard = rnd.getStartingCard().getRelevantCat(categoryChoice);
+//		for(int i = 0; i < this.playerList.length; i++) {
+//			if(i == this.currentPlayerTurn) continue;
+//			Player opponent = playerList[i];
+//			int opponentsCard = opponent.getCurrentCard().getRelevantCat(categoryChoice);
+//			int comparedResult = Integer.compare(myCard, opponentsCard);
+//			if(comparedResult == 0) {
+//				rnd.setFinalResult(DRAW);
+//				rnd.setWinner(opponent);
+//				rnd.setWinningCard(opponent.getCurrentCard());
+//				// bug
+//				// return DRAW;
+//				result = 0;
+//			} else if(comparedResult < 0) {
+//				rnd.setFinalResult(LOSS);
+//				rnd.setWinner(opponent);
+//				rnd.setWinningCard(opponent.getCurrentCard());
+//				return LOSS;
+//			}
+//			}
+//			rnd.setFinalResult(WIN);
+//			rnd.setWinner(this.getActivePlayer());
+//			rnd.setWinningCard(this.getActivePlayer().getCurrentCard());
+//			return WIN;
+			int categoryChoice = rnd.getCategory();
+			Card.indexToCompare = categoryChoice;
+			Card[] allCardsDrawn = new Card[playerList.length];
+			// we need all current cards drawn
+			for(int i = 0; i < this.playerList.length; i++) {
+			 Card crd = playerList[i].getCurrentCard();
+			 allCardsDrawn[i] = crd;
+			}			
+			
+			Arrays.sort(allCardsDrawn);
+			
+			for(Card crd : allCardsDrawn ) {
+				System.err.println(crd.printCard());
 			}
 			
-		}
-		rnd.setFinalResult(WIN);
-		rnd.setWinner(this.getActivePlayer());
-		rnd.setWinningCard(this.getActivePlayer().getCurrentCard());
-		return WIN;
+			rnd.setCardsDrawn(allCardsDrawn);
+			
+			return 0;
+	
 	}
 	
 	/**
@@ -269,7 +289,7 @@ public class Game {
 		private Player startingPlayer, winner;
 		private Card startingCard, winningCard;
 		private Player[] elimated;
-		
+		private Card[] cardsDrawn;
 		
 		Round(Player startingPlayer) {
 			this.roundNo = round + 1;
@@ -277,10 +297,15 @@ public class Game {
 			this.startingCard = this.startingPlayer.getCurrentCard();
 			this.winner = null;
 			this.winningCard = null;
+			this.cardsDrawn = null;
 			this.elimated = new Player[playerList.length];
 			this.run();
 		}
 		
+		public void setCardsDrawn(Card[] allCardsDrawn) {
+			this.cardsDrawn = allCardsDrawn;
+		}
+
 		public void setWinningCard(Card card) {
 			this.winningCard = card;
 		}

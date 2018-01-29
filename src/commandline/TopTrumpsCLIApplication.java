@@ -95,6 +95,7 @@ public class TopTrumpsCLIApplication extends View {
 		printToConsole("5. Cargo");
 		int[] answers = {1,2,3,4,5};
 		int cat = giveOptions(answers, "Please select the category you'd like to play..");
+		cat = cat - 1;
 		return cat;
 	}
 
@@ -104,9 +105,9 @@ public class TopTrumpsCLIApplication extends View {
 		if(rnd.getFinalResult() == 0 ) {
 			printToConsole("Result : It was a draw!");
 		} else {
-			printToConsole("Winning Player " + rnd.getWinner());
+			printToConsole("Winning Player " + rnd.getWinner().getName());
+			printToConsole("Winning Card : \n" + rnd.getWinningCard().printCard());
 		}
-		printToConsole("Winning Card : \n" + rnd.getWinningCard().printCard());
 	}
 
 	@Override
