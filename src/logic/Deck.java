@@ -53,6 +53,14 @@ public class Deck {
 		this.cards = shuffled;
 		
 	}
+	/**
+	 * Reports there are no cards recorded in the instance of deck 
+	 * @return boolean true if deck is empty and false otherwise
+	 */
+	public boolean isEmpty() {
+		if(this.deckSize == 0) return true;
+		return false;
+	}
 	
 	/**
 	 * Splits the deck into a given number of smaller decks (sub decks) evenly
@@ -89,7 +97,7 @@ public class Deck {
 			}
 			
 		}
-		
+		this.emptyDeck();
 		return subDecks;
 	}
 	

@@ -53,6 +53,8 @@ public abstract class Player {
 		return this.deck;
 	}
 	
+	
+	
 	/**
 	 * Returns the details of the card currently in the player's hand.
 	 * @return A formatted string containing card details.
@@ -82,6 +84,18 @@ public abstract class Player {
 	public boolean hasWon()
 	{
 		return deck.isFull();
+	}
+	
+	public boolean hasLost() {
+		final boolean ELIMINATED = true;
+		final boolean NOT_ELIMINATED = false;
+// 
+		if(this.deck.isEmpty()) {
+			this.active = false; 
+			return ELIMINATED;
+		}
+		return NOT_ELIMINATED;
+		
 	}
 
 	public int getIdentity() {

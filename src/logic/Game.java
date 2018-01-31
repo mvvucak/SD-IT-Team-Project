@@ -13,8 +13,8 @@ public class Game {
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
 	private int currentPlayerTurn;
-	private int pRemainingCount;
-	private int round, draws;
+	private int pRemainingCount; // number of players still active
+	private int round, draws; // holds count for total number of rounds and draws
 	private Deck mainDeck;
 	private ArrayList<Round> roundList;
 
@@ -22,8 +22,8 @@ public class Game {
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.pRemainingCount = this.noOfPlayers;
-		this.round = 0;
 		this.draws = 0;
+		this.round = 0;
 		this.roundList = new ArrayList<Round>();
 		boolean pleaseShuffle = true;
 		Card[] pack = this.loadDeck();
@@ -53,6 +53,7 @@ public class Game {
 		for(int i = 0; i < this.noOfPlayers; i++ ) {
 			playerList[i].setDeck(splitCards[i]); 
 		}
+		System.out.println("deck size before topCardDraw(" + playerList[0].getDeck().getDeckSize());
 	}
 	
 	private Card[] loadDeck() {
@@ -110,7 +111,7 @@ public class Game {
 	 * Also checks if they have won the game.
 	 * NOTE: Could be made private, likely only called within here. -Mat
 	 * @param winner The winner of the latest round. can be changed to an index -Mat
-	 * @return Whether the winner has also won the game.
+	 * @return Whether the winner has also won the game by checking their deck.
 	 */
 	private boolean processWonRound(Player winner)
 	{
@@ -119,10 +120,10 @@ public class Game {
 		this.mainDeck.emptyDeck(); 
 		// Pass control of the next round to the winner 
 		this.switchTurn(winner);
-		
 		return winner.hasWon();
 	}
-	
+	 
+
 	/**
 	 * compare integer if the first number is higher than second then it returns a 1
 	 * zero if it equals each other and negative if first number is smaller than second
@@ -130,18 +131,11 @@ public class Game {
 	 * @return boolean 
 	 */
 	
-	private boolean findRoundResult(Round rnd) {
-		    boolean result = true;
-			Card.indexToCompare = rnd.getCategory();
-			Player[] playersInGame = new Player[noOfPlayers]; 
+	private int findRoundResult(Round rnd) {
+			int cat = rnd.getCategory();
+			Card.indexToCompare = cat;
 			// we need to get all current players in game to being comparing
-			int pos = 0;
-			for(Player p : playerList) {
-				if(p.getActiveStatus() == false) continue;
-				playersInGame[pos] = p;
-				pos++;
-			}			
-
+			Player[] playersInGame = rnd.getPlayersInRound();
 			Arrays.sort(playersInGame, new Round());
 			
 			// prints players cards for testing purposes 
@@ -150,26 +144,26 @@ public class Game {
 				System.err.println(crd.printCard());
 			}
 			
-			Player topPlayer = playersInGame[0];
-			Player secondPlayer = playersInGame[1];
-		    // A Player has won with the highest number
-			if(topPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())
-					> secondPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())) {
-				this.processWonRound(topPlayer);
-				rnd.setWinningCard(topPlayer.getCurrentCard());
-				rnd.setWinner(topPlayer);
-			    // The 1st place and 2nd place have tied - proccess tie 
-			} else if(topPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())
-					== secondPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())) 
-			{
-				Session.view.displayDraw();
-				// need to add your these ties to the communal pile 
-				return false;
-			} 
-			// otherwise the round is over and they lost
-			  rnd.setWinningCard(topPlayer.getCurrentCard());
-			  rnd.setWinner(topPlayer);
-			  return result;
+			int firstPlace = playersInGame[0].getCurrentCard().getRelevantCat(cat);
+			int secondPlace = playersInGame[1].getCurrentCard().getRelevantCat(cat);
+		    
+			// If we subtract 1st place score from 2nd place 
+			// then we can determine the round result
+			return firstPlace - secondPlace;
+	}
+	/**
+	 * Checks if any active players in the game have lost all their cards
+	 * then change their active status to false and change the remaining player count 
+	 */
+	public void processEliminations() {
+		for(Player p : playerList) {
+			if(p.getActiveStatus()) { 
+				if(p.hasLost()) { 
+					Session.view.displayElim(p);
+					this.pRemainingCount--;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -262,44 +256,75 @@ public class Game {
 	}
 		
 	public void play() {
+		boolean gameOver = false;
+		while(!gameOver) {
+		if(pRemainingCount <= 1) gameOver = true; 
 		Player p = this.getActivePlayer();
 		Round rnd = new Round(p);
 		Session.view.initalRoundInfo(rnd);
 		int categoryChoice = p.chooseCategory();
 		rnd.setCategory(categoryChoice);
-		boolean roundOnGoing = true;
-		while(roundOnGoing) { 
-			if(this.findRoundResult(rnd)) {
-				roundOnGoing = false;
-			}
-		} 
+		rnd.setResultStatus(this.findRoundResult(rnd));
+		if(rnd.getResultStatus() == 1) {
+			Player winner = rnd.playersInRound[0];
+			rnd.setWinner(winner);
+			rnd.setWinningCard(winner.getCurrentCard());
+			this.processWonRound(winner);
+			gameOver = winner.hasWon();
+		}
+		this.processEliminations();
 		this.saveRound(rnd);
-		Session.view.displayEndRound(rnd);
+		Session.view.displayEndRound(rnd); 
+		}
+		Round finalRound = this.roundList.get(roundList.size() - 1);
+		Session.view.gameOver(finalRound.getWinner());
 	}
 
 	
 	public class Round implements Comparator<Player> {
 		
-		private int roundNo, category, drawsOfTheCards;
+		private int roundNo, category, drawsOfTheCards, resultStatus; 
 		private Player startingPlayer, winner;
 		private Card startingCard, winningCard;
-		private Player[] elimated;
+		private Player[] playersInRound;
 		private Card[] cardsDrawn;
 		
 		Round(Player startingPlayer) {
-			this.roundNo = round + 1;
+			this.roundNo = roundList.size() + 1;
 			this.startingPlayer = startingPlayer;
 			this.startingCard = this.startingPlayer.getCurrentCard();
 			this.drawsOfTheCards = 0;
 			this.winner = null;
-			this.winningCard = null;
+			// resultStatus stores a number that represents 
+			// win (1), tie(0), or incomplete (-1)
+			this.resultStatus = -1;
 			this.cardsDrawn = new Card[pRemainingCount];
-			this.elimated = new Player[playerList.length];
+			this.winningCard = null;
+			this.playersInRound = new Player[pRemainingCount];
 			this.run();
+			System.out.println("deck size after topCardDraw()" + playerList[0].getDeck().getDeckSize());
 		}
 		
+		public int getResultStatus() {
+			return this.resultStatus;
+		}
+
+		public void setResultStatus(int newRoundResult) {
+			if(newRoundResult > 0) {
+				this.resultStatus = 1;
+			} else if(newRoundResult == 0) {
+				this.resultStatus = 0;
+			} else {
+				this.resultStatus = -1;
+			}
+		}
+
 		public Round() {
-			// Empty Constructor for the comparator 
+			// Empty Constructor needed for the comparator 
+		}
+		
+		public Player[] getPlayersInRound() {
+			return this.playersInRound;
 		}
 
 		public void setCardsDrawn(Card[] allCardsDrawn) {
@@ -339,6 +364,7 @@ public class Game {
 			for(Player p : playerList) {
 				if(p.getActiveStatus() == false) continue;
 				p.drawCard();
+				this.playersInRound[this.drawsOfTheCards] = p;
 				this.cardsDrawn[this.drawsOfTheCards] = p.getCurrentCard();
 				this.drawsOfTheCards++;
 			}

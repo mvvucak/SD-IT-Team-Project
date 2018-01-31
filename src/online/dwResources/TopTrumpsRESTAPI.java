@@ -124,5 +124,17 @@ public class TopTrumpsRESTAPI extends View {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void displayElim(Player player) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gameOver(Player player) {
+		// TODO Auto-generated method stub
+		
+	}
 		
 }

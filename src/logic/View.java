@@ -15,5 +15,9 @@ public abstract class View {
 	abstract public void displayEndRound(Round rnd);
 
 	abstract public void displayDraw();
+
+	abstract public void displayElim(Player player); 
+	
+	abstract public void gameOver(Player player);
 	
 }

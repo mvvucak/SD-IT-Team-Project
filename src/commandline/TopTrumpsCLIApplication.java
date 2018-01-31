@@ -27,11 +27,10 @@ public class TopTrumpsCLIApplication extends View {
 		// State
 		boolean userWantsToQuit = false; // flag to check whether the user wants to quit the application
 		
-		displayOptionMenu();
 		// Loop until the user wants to exit the game
 		while (!userWantsToQuit) {
+			displayOptionMenu();
 			cliGame.play();
-			userWantsToQuit=true; // use this when the user wants to exit the game
 		}
 
 		scan.close();
@@ -46,7 +45,7 @@ public class TopTrumpsCLIApplication extends View {
 				cliGame = Session.createNewGame(4);
 				hideMenu = true;
 			} else { if(choice == 1) 
-				printToConsole("Okay! Here are your statistics");
+				print("Okay! Here are your statistics");
 			}
 		}
 	}
@@ -56,8 +55,8 @@ public class TopTrumpsCLIApplication extends View {
 		int countTries = 0;
 		int response;
 		do {
-			if( (countTries & 1) == 0) printToConsole(msg);
-			else printToConsole("Please Try again.");
+			if( (countTries & 1) == 0) print(msg);
+			else print("Please Try again.");
 			countTries++;
 			response = scan.nextInt();
 		} while(!ArrayUtils.contains(answers, response));
@@ -76,7 +75,7 @@ public class TopTrumpsCLIApplication extends View {
 	}
 	
 	
-	private static void printToConsole(String str) {
+	private static void print(String str) {
 		System.out.println(str);
 	}
 	
@@ -88,11 +87,11 @@ public class TopTrumpsCLIApplication extends View {
 	 */
 	@Override
 	public int getCategory() {
-		printToConsole("1. Size");
-		printToConsole("2. Speed");
-		printToConsole("3. Range");
-		printToConsole("4. Firepower");
-		printToConsole("5. Cargo");
+		print("1. Size");
+		print("2. Speed");
+		print("3. Range");
+		print("4. Firepower");
+		print("5. Cargo");
 		int[] answers = {1,2,3,4,5};
 		int cat = giveOptions(answers, "Please select the category you'd like to play..");
 		cat = cat - 1;
@@ -101,21 +100,36 @@ public class TopTrumpsCLIApplication extends View {
 
 	@Override
 	public void displayEndRound(Round rnd) {
-			printToConsole("Selected Category " +  Card.catNames[rnd.getCategory()]);
-			printToConsole(rnd.getWinner().getName() + "Wins! Winning Player ");
-			printToConsole("The Winning Card : \n" + rnd.getWinningCard().printCard());
+			print("Selected Category " +  Card.catNames[rnd.getCategory()]);
+			if(rnd.getResultStatus() == 1 ) {
+				print(rnd.getWinner().getName() + " Wins round!");
+				print("The Winning Card : \n" + rnd.getWinningCard().printCard());
+			} else if(rnd.getResultStatus() == 0) {
+				print("This category resulted in a tie.");
+			}
 	}
 
 	@Override
 	public void initalRoundInfo(Round rnd) {
-		printToConsole("Round : "+rnd.getRoundNumber());
-		printToConsole("Turn :" + rnd.getStartingPlayer().getName());
-		printToConsole(rnd.getStartingCard().printCard());
+		print("Round : "+rnd.getRoundNumber());
+		print("Turn :" + rnd.getStartingPlayer().getName());
+		print(rnd.getStartingCard().printCard());
 	}
 
 	@Override
 	public void displayDraw() {
-		printToConsole("This category resulted in a tie! Before the round ends we must go again..");
+		print("This category resulted in a tie.");
+	}
+
+	@Override
+	public void displayElim(Player player) {
+		print(player.getName() + " has been eliminated. Better luck next time punk");
+	}
+
+	@Override
+	public void gameOver(Player player) {
+		print(player.getName() + " has won the game!");
+		print("With a deck size of " + player.getDeck().getDeckSize());
 	}
 
 }
