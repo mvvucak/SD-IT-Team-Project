@@ -123,6 +123,6 @@ public abstract class Player {
 		// return top card in deck
 		return this.currentCard;
 	}
-
+	
 
 }

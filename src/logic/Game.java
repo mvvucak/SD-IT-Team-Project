@@ -2,6 +2,7 @@ package logic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 
 import java.io.*;
@@ -12,6 +13,7 @@ public class Game {
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
 	private int currentPlayerTurn;
+	private int pRemainingCount;
 	private int round, draws;
 	private Deck mainDeck;
 	private ArrayList<Round> roundList;
@@ -19,6 +21,7 @@ public class Game {
 	public Game(int noOfAi) {
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
+		this.pRemainingCount = this.noOfPlayers;
 		this.round = 0;
 		this.draws = 0;
 		this.roundList = new ArrayList<Round>();
@@ -33,7 +36,8 @@ public class Game {
 		this.addPlayersToGame();
 		this.loadDeck();
 		this.dealCards();
-		this.currentPlayerTurn = this.selectRandomPlayer();
+		// if its first round selects random player to start game
+		currentPlayerTurn = selectRandomPlayer();
 	}
 	
 	private void saveRound(Round rnd) {
@@ -113,8 +117,8 @@ public class Game {
 		winner.addWonCards(this.mainDeck); //Assuming mainDeck will hold each round's cards Yes -Mat.
 		//Remove card references from the common pile.
 		this.mainDeck.emptyDeck(); 
-		//Assuming identity and index in player array are identical. -Mat.
-		this.currentPlayerTurn = winner.getIdentity(); 
+		// Pass control of the next round to the winner 
+		this.switchTurn(winner);
 		
 		return winner.hasWon();
 	}
@@ -123,58 +127,49 @@ public class Game {
 	 * compare integer if the first number is higher than second then it returns a 1
 	 * zero if it equals each other and negative if first number is smaller than second
 	 * @param rnd 
-	 * @return 1 for a win, 0 for a draw and -1 for a loss
+	 * @return boolean 
 	 */
 	
-	private int findRoundResult(Round rnd) {
-//		  final int LOSS = -1;
-//		  final int DRAW = 0;
-//		  final int WIN = 1;
-//		  int result = 0;
-//		  int categoryChoice = rnd.getCategory();
-//		int myCard = rnd.getStartingCard().getRelevantCat(categoryChoice);
-//		for(int i = 0; i < this.playerList.length; i++) {
-//			if(i == this.currentPlayerTurn) continue;
-//			Player opponent = playerList[i];
-//			int opponentsCard = opponent.getCurrentCard().getRelevantCat(categoryChoice);
-//			int comparedResult = Integer.compare(myCard, opponentsCard);
-//			if(comparedResult == 0) {
-//				rnd.setFinalResult(DRAW);
-//				rnd.setWinner(opponent);
-//				rnd.setWinningCard(opponent.getCurrentCard());
-//				// bug
-//				// return DRAW;
-//				result = 0;
-//			} else if(comparedResult < 0) {
-//				rnd.setFinalResult(LOSS);
-//				rnd.setWinner(opponent);
-//				rnd.setWinningCard(opponent.getCurrentCard());
-//				return LOSS;
-//			}
-//			}
-//			rnd.setFinalResult(WIN);
-//			rnd.setWinner(this.getActivePlayer());
-//			rnd.setWinningCard(this.getActivePlayer().getCurrentCard());
-//			return WIN;
-			int categoryChoice = rnd.getCategory();
-			Card.indexToCompare = categoryChoice;
-			Card[] allCardsDrawn = new Card[playerList.length];
-			// we need all current cards drawn
-			for(int i = 0; i < this.playerList.length; i++) {
-			 Card crd = playerList[i].getCurrentCard();
-			 allCardsDrawn[i] = crd;
+	private boolean findRoundResult(Round rnd) {
+		    boolean result = true;
+			Card.indexToCompare = rnd.getCategory();
+			Player[] playersInGame = new Player[noOfPlayers]; 
+			// we need to get all current players in game to being comparing
+			int pos = 0;
+			for(Player p : playerList) {
+				if(p.getActiveStatus() == false) continue;
+				playersInGame[pos] = p;
+				pos++;
 			}			
+
+			Arrays.sort(playersInGame, new Round());
 			
-			Arrays.sort(allCardsDrawn);
-			
-			for(Card crd : allCardsDrawn ) {
+			// prints players cards for testing purposes 
+			for(int i = 0; i < playersInGame.length; i++) {
+				Card crd = playersInGame[i].getCurrentCard();
 				System.err.println(crd.printCard());
 			}
 			
-			rnd.setCardsDrawn(allCardsDrawn);
-			
-			return 0;
-	
+			Player topPlayer = playersInGame[0];
+			Player secondPlayer = playersInGame[1];
+		    // A Player has won with the highest number
+			if(topPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())
+					> secondPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())) {
+				this.processWonRound(topPlayer);
+				rnd.setWinningCard(topPlayer.getCurrentCard());
+				rnd.setWinner(topPlayer);
+			    // The 1st place and 2nd place have tied - proccess tie 
+			} else if(topPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())
+					== secondPlayer.getCurrentCard().getRelevantCat(rnd.getCategory())) 
+			{
+				Session.view.displayDraw();
+				// need to add your these ties to the communal pile 
+				return false;
+			} 
+			// otherwise the round is over and they lost
+			  rnd.setWinningCard(topPlayer.getCurrentCard());
+			  rnd.setWinner(topPlayer);
+			  return result;
 	}
 	
 	/**
@@ -221,20 +216,15 @@ public class Game {
 		return ran;
 	}
 	
-	public void switchTurn() {
-
+	public void switchTurn(Player winner) {
+		// Find Winner in PlayerList by finding the position 
+		// of the matching object 
 		for(int i = 0; i < playerList.length; i++) {
-			this.currentPlayerTurn++;
-			int playerIndex = this.currentPlayerTurn % playerList.length;
-
-			if(this.playerList[playerIndex].getActiveStatus()) {
-				this.currentPlayerTurn = playerIndex; 
-				break;
-			} 
-			continue;
-
+			if(playerList[i] == winner) {
+				this.currentPlayerTurn = i;
+			}
 		} 
-		System.out.println("New turn " + this.currentPlayerTurn);
+		System.out.println("Switched turn to winner =  " + playerList[this.currentPlayerTurn].getName());
 	}
 	
 	public Player getPlayer(int query) {
@@ -277,15 +267,20 @@ public class Game {
 		Session.view.initalRoundInfo(rnd);
 		int categoryChoice = p.chooseCategory();
 		rnd.setCategory(categoryChoice);
-		this.findRoundResult(rnd);
+		boolean roundOnGoing = true;
+		while(roundOnGoing) { 
+			if(this.findRoundResult(rnd)) {
+				roundOnGoing = false;
+			}
+		} 
 		this.saveRound(rnd);
 		Session.view.displayEndRound(rnd);
 	}
 
 	
-	public class Round {
+	public class Round implements Comparator<Player> {
 		
-		private int roundNo, category, drawsOfTheCards, finalresult;
+		private int roundNo, category, drawsOfTheCards;
 		private Player startingPlayer, winner;
 		private Card startingCard, winningCard;
 		private Player[] elimated;
@@ -295,13 +290,18 @@ public class Game {
 			this.roundNo = round + 1;
 			this.startingPlayer = startingPlayer;
 			this.startingCard = this.startingPlayer.getCurrentCard();
+			this.drawsOfTheCards = 0;
 			this.winner = null;
 			this.winningCard = null;
-			this.cardsDrawn = null;
+			this.cardsDrawn = new Card[pRemainingCount];
 			this.elimated = new Player[playerList.length];
 			this.run();
 		}
 		
+		public Round() {
+			// Empty Constructor for the comparator 
+		}
+
 		public void setCardsDrawn(Card[] allCardsDrawn) {
 			this.cardsDrawn = allCardsDrawn;
 		}
@@ -321,23 +321,29 @@ public class Game {
 		public Player getWinner() {
 			return this.winner;
 		}
-
-		public void setFinalResult(int state) {
-			this.finalresult = state;
-		}
 		
-		public int getFinalResult() {
-			return this.finalresult;
+		public int compare(Player you, Player other) {
+			int forThis = you.getCurrentCard().getRelevantCat(Card.indexToCompare);
+			int forThat = other.getCurrentCard().getRelevantCat(Card.indexToCompare);
+			
+			if (forThis == forThat) 
+				return 0;
+			else if (forThis > forThat)
+				return -1;
+			else 
+				return 1;
 		}
 
 		private void run() {
-			// selects random player to start game
-			if(round == 1) {
-				currentPlayerTurn = selectRandomPlayer();
-			}
+			
 			for(Player p : playerList) {
+				if(p.getActiveStatus() == false) continue;
 				p.drawCard();
+				this.cardsDrawn[this.drawsOfTheCards] = p.getCurrentCard();
+				this.drawsOfTheCards++;
 			}
+			
+			mainDeck.addCardsToBottom(this.cardsDrawn, this.drawsOfTheCards);
 			this.startingPlayer = playerList[currentPlayerTurn];
 			this.startingCard = this.startingPlayer.getCurrentCard();
 		}
@@ -361,6 +367,7 @@ public class Game {
 		public int getRoundNumber() {
 			return this.roundNo;
 		}
+		
 		
 	}
 

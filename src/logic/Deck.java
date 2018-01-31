@@ -7,7 +7,7 @@ public class Deck {
 	private Card[] cards;
 	private int deckSize; // no of cards in current deck 
 	public static final int MAXIMUM_DECK_SIZE = 40;
-	
+
 	
 	Deck()
 	{
@@ -73,7 +73,6 @@ public class Deck {
 		//For each card in the big deck
 		for(int i = 0; i<deckSize; i++)
 		{
-			System.out.println("pos " + i);
 			//Add the card to the current sub deck in the cycle
 			Card cardToAdd = this.cards[i];
 			subDecks[whichDeck].addCardToTop(cardToAdd);

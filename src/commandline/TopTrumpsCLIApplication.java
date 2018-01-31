@@ -101,13 +101,9 @@ public class TopTrumpsCLIApplication extends View {
 
 	@Override
 	public void displayEndRound(Round rnd) {
-		printToConsole("Selected Category " +  Card.catNames[rnd.getCategory()]);
-		if(rnd.getFinalResult() == 0 ) {
-			printToConsole("Result : It was a draw!");
-		} else {
-			printToConsole("Winning Player " + rnd.getWinner().getName());
-			printToConsole("Winning Card : \n" + rnd.getWinningCard().printCard());
-		}
+			printToConsole("Selected Category " +  Card.catNames[rnd.getCategory()]);
+			printToConsole(rnd.getWinner().getName() + "Wins! Winning Player ");
+			printToConsole("The Winning Card : \n" + rnd.getWinningCard().printCard());
 	}
 
 	@Override
@@ -115,6 +111,11 @@ public class TopTrumpsCLIApplication extends View {
 		printToConsole("Round : "+rnd.getRoundNumber());
 		printToConsole("Turn :" + rnd.getStartingPlayer().getName());
 		printToConsole(rnd.getStartingCard().printCard());
+	}
+
+	@Override
+	public void displayDraw() {
+		printToConsole("This category resulted in a tie! Before the round ends we must go again..");
 	}
 
 }

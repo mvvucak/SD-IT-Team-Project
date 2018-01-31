@@ -118,5 +118,11 @@ public class TopTrumpsRESTAPI extends View {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void displayDraw() {
+		// TODO Auto-generated method stub
+		
+	}
 		
 }

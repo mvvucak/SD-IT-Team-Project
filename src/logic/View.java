@@ -13,5 +13,7 @@ public abstract class View {
 	abstract public void initalRoundInfo(Round rnd);
 
 	abstract public void displayEndRound(Round rnd);
+
+	abstract public void displayDraw();
 	
 }
