@@ -37,7 +37,6 @@ public class Game {
 		Deck[] splitCards = this.mainDeck.split(this.noOfPlayers);
 		for(int i = 0; i < this.noOfPlayers; i++ ) {
 			playerList[i].setDeck(splitCards[i]); 
-			System.out.println("Player: " + playerList[i].getName() + " have cards " + playerList[i].getDeck().toString() );
 		}
 	}
 	
@@ -52,7 +51,6 @@ public class Game {
 			for(int i = 0; i < Card.catNames.length; i++) {
 				Card.catNames[i] = scan.next();
 			}
-			System.out.println(Arrays.toString(Card.catNames));
 			int index = 0;
 			 while (scan.hasNext()) {
 					int[] values = new int[Card.catNames.length];
