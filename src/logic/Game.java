@@ -14,8 +14,9 @@ public class Game {
 	private Player operator; // ref to the person playing
 	private int currentPlayerTurn;
 	private int pRemainingCount; // number of players still active
-	private int roundCount = 1; // holds count for total number of rounds in a game
-	private int gameDrawCount = 0; // holds count for total number of cards draws in a game
+	// holds count for total number of cards draws in a game
+	// holds count for total number of rounds in a game
+	private int roundCount, gameDrawCount; 
 	private Deck mainDeck;
 	private ArrayList<Round> roundList;
 
@@ -23,8 +24,8 @@ public class Game {
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.pRemainingCount = this.noOfPlayers;
-		this.gameDrawCount = 0;
 		this.roundCount = 0;
+		this.gameDrawCount = 0;
 		this.roundList = new ArrayList<Round>();
 		boolean pleaseShuffle = true;
 		Card[] pack = this.loadDeck();
@@ -134,7 +135,8 @@ public class Game {
 			// we need to get all current players in game to being comparing
 			Player[] playersInGame = rnd.getPlayersInRound();
 			Arrays.sort(playersInGame, new Round());
-			
+			//if(pRemainingCount <= 1) return 1; 
+
 			int firstPlace = playersInGame[0].getCurrentCard().getRelevantCat(cat);
 			int secondPlace = playersInGame[1].getCurrentCard().getRelevantCat(cat);
 			// If we subtract 1st place score from 2nd place 
@@ -155,6 +157,8 @@ public class Game {
 				}
 			}
 		}
+		// If there is only 1 player left playing then end the game
+		if(this.pRemainingCount <= 1) Session.view.gameOver(playerList[currentPlayerTurn]);
 	}
 	
 	/**
@@ -250,7 +254,6 @@ public class Game {
 	public void play() {
 		boolean gameOver = false;
 		while(!gameOver) {
-		if(pRemainingCount <= 1) gameOver = true; 
 		Player p = this.getActivePlayer();
 		Round rnd = new Round(p);
 		Session.view.initalRoundInfo(rnd);
@@ -262,10 +265,10 @@ public class Game {
 			rnd.setWinner(winner);
 			rnd.setWinningCard(winner.getCurrentCard());
 			this.processWonRound(winner);
-			gameOver = winner.hasWon();
+			gameOver = rnd.getWinner().hasWon();
 		}
-		this.processEliminations();
 		this.saveRound(rnd);
+		this.processEliminations();
 		Session.view.displayEndRound(rnd); 
 		}
 		Round finalRound = this.roundList.get(roundList.size() - 1);

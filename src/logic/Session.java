@@ -26,8 +26,9 @@ public class Session {
 		return newGame;
 	}
 	
-	public static void setView(View playerView) {
-		view = playerView;
+	public static void setView(View viewType) {
+		// set the type of view you want to display to
+		view = viewType;
 	}
 
 	public static Game findGameById(int gameId) {

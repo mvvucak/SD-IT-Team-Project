@@ -13,9 +13,10 @@ import logic.Game.Round;
  */
 public class TopTrumpsCLIApplication extends View {
 
-	private static Game cliGame;
+	//private Game cliGame;
 	private static Scanner scan = new Scanner(System.in);
-	private int loadingTime = 5;
+	// This is the number of seconds loading takes (during testing set to 0)
+	private int loadingTime = 0; 
 	/**
 	 * This main method is called by TopTrumps.java when the user specifies that they want to run in
 	 * command line mode. The contents of args[0] is whether we should write game logs to a file.
@@ -30,29 +31,29 @@ public class TopTrumpsCLIApplication extends View {
 		
 		// Loop until the user wants to exit the game
 		while (!userWantsToQuit) {
-			displayOptionMenu();
-			cliGame.play();
+			boolean start = displayOptionMenu();
+			if(start)  Session.createNewGame(4).play();
 		}
 
 		scan.close();
 	}
 	
-	private static void displayOptionMenu() {
-		boolean hideMenu = false;
-		while(!hideMenu) {
+	private static boolean displayOptionMenu() {
+		boolean startGame = false;
+		while(!startGame) {
 			int[] menuOptions = {1,2};
 			int choice = giveOptions(menuOptions, "Would you like to View Statistics (1) of past games or Play a New Game (2)?");
 			if(choice == 2) {
-				cliGame = Session.createNewGame(4);
-				hideMenu = true;
+			startGame = true;
 			} else { if(choice == 1) 
 				print("Okay! Here are your statistics");
 			}
 		}
+		return startGame;
 	}
 	
 	
-	private static int giveOptions(int[] answers, String msg) {
+	public static int giveOptions(int[] answers, String msg) {
 		int countTries = 0;
 		int response;
 		do {
@@ -70,25 +71,26 @@ public class TopTrumpsCLIApplication extends View {
  	 * NOTE: Method can be adjusted to take a Player or String as parameter later.
  	 * NOTE 2: Can be used to print out all players' cards at the end of a round too.
 	 */
-	private void printCard(Card c) 
+	public void printCard(Card c) 
 	{
 		System.out.println(c.printCard());
 	}
 	
 	
-	private static void print(String str) {
+	public static void print(String str) {
 		System.out.println(str);
 	}
 	
-	private void loading()   {
+	public void loading()   {
 		try {
 			System.out.print("\n Loading.");
 			for(int i = 0; i < this.loadingTime; i++) {
 				Thread.sleep(1000);
 				System.out.print(".");
 			}
+			System.out.print("\n");
 		} catch (Exception InterruptedException) {
-			System.err.println("Failed to load");
+			System.err.println("Error on loading screen");
 		}
 	}
 	
