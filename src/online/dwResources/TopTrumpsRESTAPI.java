@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import logic.*;
+import logic.Game.Round;
 
 @Path("/toptrumps") // Resources specified here should be hosted at http://localhost:7777/toptrumps
 @Produces(MediaType.APPLICATION_JSON) // This resource returns JSON content
@@ -33,7 +34,7 @@ import logic.*;
  * REST API methods in Dropwizard. You will need to replace these with
  * methods that allow a TopTrumps game to be controled from a Web page.
  */
-public class TopTrumpsRESTAPI {
+public class TopTrumpsRESTAPI extends View {
 
 	/** A Jackson Object writer. It allows us to turn Java objects
 	 * into JSON strings easily. */
@@ -99,6 +100,47 @@ public class TopTrumpsRESTAPI {
 		// try and create new game session for user
 		 Game game = Session.createNewGame(aiSelect);
 		 return oWriter.writeValueAsString(game);
+	}
+
+	@Override
+	public int getCategory() {
+		return 0;
+	}
+
+	@Override
+	public void initalRoundInfo(Round rnd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void displayEndRound(Round rnd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void displayDraw() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void displayElim(Player player) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void gameOver(Player player) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void displayPlayerChange(Player player) {
+		// TODO Auto-generated method stub
+		
 	}
 		
 }

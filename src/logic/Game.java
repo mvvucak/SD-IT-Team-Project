@@ -1,6 +1,8 @@
 package logic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 
 import java.io.*;
@@ -11,13 +13,19 @@ public class Game {
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
 	private int currentPlayerTurn;
-	private int round;
+	private int pRemainingCount; // number of players still active
+	private int roundCount = 1; // holds count for total number of rounds in a game
+	private int gameDrawCount = 0; // holds count for total number of cards draws in a game
 	private Deck mainDeck;
+	private ArrayList<Round> roundList;
 
 	public Game(int noOfAi) {
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
-		this.round = 1;
+		this.pRemainingCount = this.noOfPlayers;
+		this.gameDrawCount = 0;
+		this.roundCount = 0;
+		this.roundList = new ArrayList<Round>();
 		boolean pleaseShuffle = true;
 		Card[] pack = this.loadDeck();
 		this.mainDeck = new Deck(pack, pleaseShuffle);
@@ -25,15 +33,25 @@ public class Game {
 	}
 
 	public void init() {
-		// build a playerList 
+		// Add players to our player list 
 		this.addPlayersToGame();
-		// selects random player to start game
-		this.currentPlayerTurn = this.selectRandomPlayer();
+		// Save the cards from the deck text file
 		this.loadDeck();
-		this.allocateCardsToPlayer();
+		// Divide all our starting cards up between players 
+		this.dealCards();
+		// Assigns a random player number to begin the game
+		currentPlayerTurn = selectRandomPlayer();
 	}
 	
-	private void allocateCardsToPlayer() {
+	private void saveRound(Round rnd) {
+		this.roundList.add(rnd);
+	}
+	
+	public Round getCurrentRound() {
+		return this.roundList.get(roundCount);
+	}
+	
+	private void dealCards() {
 		Deck[] splitCards = this.mainDeck.split(this.noOfPlayers);
 		for(int i = 0; i < this.noOfPlayers; i++ ) {
 			playerList[i].setDeck(splitCards[i]); 
@@ -46,7 +64,8 @@ public class Game {
 		try {
 			FileReader reader = new FileReader(filename); 
 			Scanner scan = new Scanner(reader);
-			scan.next(); // skip description 
+			// skip description line in text file
+			scan.next(); 
 			
 			for(int i = 0; i < Card.catNames.length; i++) {
 				Card.catNames[i] = scan.next();
@@ -55,11 +74,11 @@ public class Game {
 			 while (scan.hasNext()) {
 					int[] values = new int[Card.catNames.length];
 				    String desc = scan.next();
-				    values[0] = scan.nextInt();
-				    values[1] = scan.nextInt();
-				    values[2] = scan.nextInt();
-				    values[3] = scan.nextInt();
-				    values[4] = scan.nextInt();
+				    //Changed value reading to use number of categories instead of making it hard-coded
+				    //Otherwise just set values length to 5 instead of Card.catNames.length -Mat  
+				    for(int i=0; i < values.length; i++) {
+				    	values[i] = scan.nextInt();
+				    }
 				    topTrumpsPack[index] = new Card(desc, values);
 				    index++;
 			  }
@@ -67,31 +86,90 @@ public class Game {
 		} catch(IOException e) {
 			
 		}
-	    System.out.println(topTrumpsPack[7].getDescription());
-
 		return topTrumpsPack; 
 	}
 
 
 	private void addPlayersToGame() {
-		// assign Player object to the game operator
+		// assign HumanPlayer object to the game operator and add them to Player array
 		this.operator = new HumanPlayer(); 
 		this.playerList[0] = this.operator;
-		// adds list of Player objects to our Player arra
+		// Populate remainder of array with AIs
 		int len = this.playerList.length;
 		for(int i = 1; i < len; i++) {
 			this.playerList[i] = new ComputerPlayer();
 		}
 
 	}
+	
+	
+	/**
+	 * Adds cards from communal pile to the winner's deck and makes them the active player.
+	 * Also checks if they have won the game.
+	 * NOTE: Could be made private, likely only called within here. -Mat
+	 * @param winner The winner of the latest round. can be changed to an index -Mat
+	 * @return Whether the winner has also won the game by checking their deck.
+	 */
+	private boolean processWonRound(Player winner)
+	{
+		winner.addWonCards(this.mainDeck); //Assuming mainDeck will hold each round's cards Yes -Mat.
+		//Remove card references from the common pile.
+		this.mainDeck.emptyDeck(); 
+		// Pass control of the next round to the winner 
+		this.switchTurn(winner);
+		return winner.hasWon();
+	}
+	 
 
-	public int getRound() {
-		return this.round;
+	/**
+	 * compare integer if the first number is higher than second then it returns a 1
+	 * zero if it equals each other and negative if first number is smaller than second
+	 * @param rnd 
+	 * @return boolean 
+	 */
+	
+	private int findRoundResult(Round rnd) {
+			int cat = rnd.getCategory();
+			Card.indexToCompare = cat;
+			// we need to get all current players in game to being comparing
+			Player[] playersInGame = rnd.getPlayersInRound();
+			Arrays.sort(playersInGame, new Round());
+			
+			int firstPlace = playersInGame[0].getCurrentCard().getRelevantCat(cat);
+			int secondPlace = playersInGame[1].getCurrentCard().getRelevantCat(cat);
+			// If we subtract 1st place score from 2nd place 
+			// then we can determine the round result
+			return firstPlace - secondPlace;
 	}
 	
+	/**
+	 * Checks if any active players in the game have lost all their cards
+	 * then change their active status to false and change the remaining player count 
+	 */
+	public void processEliminations() {
+		for(Player p : playerList) {
+			if(p.getActiveStatus()) { 
+				if(p.hasLost()) { 
+					Session.view.displayElim(p);
+					this.pRemainingCount--;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @return Whether it is currently the user's turn.
+	 */
+	public boolean isHumanActive() {
+		return this.playerList[currentPlayerTurn].isHuman();
+	}
+	
+	public int getRound() {
+		return this.roundCount;
+	}
 	
 	public void setRound(int n) {
-		this.round = n;
+		this.roundCount = n;
 	}
 
 	public Player getOperator() {
@@ -110,28 +188,31 @@ public class Game {
 		return this.playerList;
 	}
 	
+	public Card getPlayerCard() {
+		return this.playerList[this.currentPlayerTurn].getCurrentCard();
+	}
+	
+	public Player getActivePlayer() {
+		return this.playerList[this.currentPlayerTurn];
+	}
+	
 	public int selectRandomPlayer() {
 		int ran = (int) Math.floor(Math.random() * this.playerList.length);
 		return ran;
 	}
 	
-	public void switchTurn() {
-
+	public void switchTurn(Player winner) {
+		// Find Winner in PlayerList by finding the position 
+		// of the matching object 
 		for(int i = 0; i < playerList.length; i++) {
-			this.currentPlayerTurn++;
-			int playerIndex = this.currentPlayerTurn % playerList.length;
-
-			if(this.playerList[playerIndex].getActiveStatus()) {
-				this.currentPlayerTurn = playerIndex; 
-				break;
-			} 
-			continue;
-
+			if(playerList[i] == winner) {
+				this.currentPlayerTurn = i;
+			}
 		} 
-		System.out.println("New turn " + this.currentPlayerTurn);
+		Session.view.displayPlayerChange(playerList[this.currentPlayerTurn]);
+
 	}
 	
-
 	public Player getPlayer(int query) {
 		  Player matched = null;
 	        for(Player p : this.playerList ) {
@@ -144,22 +225,167 @@ public class Game {
 	        return matched;
 	}
 	
-	public static void main(String[] args) {
-		Game testCase = new Game(4); 
-		System.out.println("the current player" + testCase.currentPlayerTurn);
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		System.out.println("Now I have turned human to off");
-//		testCase.operator.setActiveStatus(false);
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		testCase.switchTurn();
-//		testCase.switchTurn();
+	//Next 2 methods are mostly for interaction with CLIApplication. 
+	//Used in case CL or Online app needs to get user's card or other details. May not be used.
+	
+	/**
+	 * @return The user's player object.
+	 */
+	public Player getHumanPlayer() {
+		return this.operator;
+	}
+	
+	/**
+	 * @return The user's currently drawn card.
+	 */
+	public Card getHumansCurrentCard(){
+		return this.operator.getCurrentCard();
+	}
+		
+	/**
+	 * The core game loop 
+	 * Call this method with an instance of Game object - it will run 
+	 */
+		
+	public void play() {
+		boolean gameOver = false;
+		while(!gameOver) {
+		if(pRemainingCount <= 1) gameOver = true; 
+		Player p = this.getActivePlayer();
+		Round rnd = new Round(p);
+		Session.view.initalRoundInfo(rnd);
+		int categoryChoice = p.chooseCategory();
+		rnd.setCategory(categoryChoice);
+		rnd.setResultStatus(this.findRoundResult(rnd));
+		if(rnd.getResultStatus() == 1) {
+			Player winner = rnd.playersInRound[0];
+			rnd.setWinner(winner);
+			rnd.setWinningCard(winner.getCurrentCard());
+			this.processWonRound(winner);
+			gameOver = winner.hasWon();
+		}
+		this.processEliminations();
+		this.saveRound(rnd);
+		Session.view.displayEndRound(rnd); 
+		}
+		Round finalRound = this.roundList.get(roundList.size() - 1);
+		Session.view.gameOver(finalRound.getWinner());
+	}
+
+	
+	public class Round implements Comparator<Player> {
+		
+		private int roundNo, category, drawsOfTheCards, resultStatus; 
+		private Player startingPlayer, winner;
+		private Card startingCard, winningCard;
+		private Player[] playersInRound;
+		private Card[] cardsDrawn;
+		
+		Round(Player startingPlayer) {
+			this.roundNo = roundCount += 1;
+			this.startingPlayer = startingPlayer;
+			this.startingCard = this.startingPlayer.getCurrentCard();
+			this.drawsOfTheCards = 0;
+			this.winner = null;
+			// resultStatus stores a number that represents 
+			// win (1), tie(0), or incomplete (-1)
+			this.resultStatus = -1;
+			this.cardsDrawn = new Card[pRemainingCount];
+			this.winningCard = null;
+			this.playersInRound = new Player[pRemainingCount];
+			this.run();
+		}
+		
+		public int getResultStatus() {
+			return this.resultStatus;
+		}
+
+		public void setResultStatus(int newRoundResult) {
+			if(newRoundResult > 0) {
+				this.resultStatus = 1;
+			} else if(newRoundResult == 0) {
+				this.resultStatus = 0;
+			} else {
+				this.resultStatus = -1;
+			}
+		}
+
+		public Round() {
+			// Empty Constructor needed for the comparator 
+		}
+		
+		public Player[] getPlayersInRound() {
+			return this.playersInRound;
+		}
+
+		public void setCardsDrawn(Card[] allCardsDrawn) {
+			this.cardsDrawn = allCardsDrawn;
+		}
+
+		public void setWinningCard(Card card) {
+			this.winningCard = card;
+		}
+		
+		public Card getWinningCard() {
+			return this.winningCard;
+		}
+
+		public void setWinner(Player winner) {
+			this.winner = winner;
+		}
+		
+		public Player getWinner() {
+			return this.winner;
+		}
+		
+		public int compare(Player you, Player other) {
+			int forThis = you.getCurrentCard().getRelevantCat(Card.indexToCompare);
+			int forThat = other.getCurrentCard().getRelevantCat(Card.indexToCompare);
+			
+			if (forThis == forThat) 
+				return 0;
+			else if (forThis > forThat)
+				return -1;
+			else 
+				return 1;
+		}
+
+		private void run() {
+			
+			for(Player p : playerList) {
+				if(p.getActiveStatus() == false) continue;
+				p.drawCard();
+				this.playersInRound[this.drawsOfTheCards] = p;
+				this.cardsDrawn[this.drawsOfTheCards] = p.getCurrentCard();
+				this.drawsOfTheCards++;
+			}
+			gameDrawCount += this.drawsOfTheCards;
+			mainDeck.addCardsToBottom(this.cardsDrawn, this.drawsOfTheCards);
+			this.startingPlayer = playerList[currentPlayerTurn];
+			this.startingCard = this.startingPlayer.getCurrentCard();
+		}
+		
+		public int getCategory() {
+			return this.category;
+		}
+		
+		public void setCategory(int val) {
+			this.category = val;
+		}
+		
+		public Card getStartingCard() {
+			return this.startingCard;
+		}
+		
+		public Player getStartingPlayer() {
+			return this.startingPlayer;
+		}
+		
+		public int getRoundNumber() {
+			return this.roundNo;
+		}
+		
+		
 	}
 
 }

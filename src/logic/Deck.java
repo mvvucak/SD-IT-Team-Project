@@ -7,7 +7,7 @@ public class Deck {
 	private Card[] cards;
 	private int deckSize; // no of cards in current deck 
 	public static final int MAXIMUM_DECK_SIZE = 40;
-	
+
 	
 	Deck()
 	{
@@ -53,6 +53,14 @@ public class Deck {
 		this.cards = shuffled;
 		
 	}
+	/**
+	 * Reports there are no cards recorded in the instance of deck 
+	 * @return boolean true if deck is empty and false otherwise
+	 */
+	public boolean isEmpty() {
+		if(this.deckSize == 0) return true;
+		return false;
+	}
 	
 	/**
 	 * Splits the deck into a given number of smaller decks (sub decks) evenly
@@ -73,7 +81,6 @@ public class Deck {
 		//For each card in the big deck
 		for(int i = 0; i<deckSize; i++)
 		{
-			System.out.println("pos " + i);
 			//Add the card to the current sub deck in the cycle
 			Card cardToAdd = this.cards[i];
 			subDecks[whichDeck].addCardToTop(cardToAdd);
@@ -90,55 +97,18 @@ public class Deck {
 			}
 			
 		}
-		
+		this.emptyDeck();
 		return subDecks;
 	}
-/*
-	public static void main(String[] args) {
-		
-		Deck testDeck = new Deck();
-		testDeck.addCardToTop(new Card("Blue"));
-		testDeck.addCardToTop(new Card("Green"));
-		testDeck.addCardToTop(new Card("Red"));
-		testDeck.addCardToTop(new Card("Purple"));
-		testDeck.addCardToTop(new Card("Cyan"));
-		testDeck.addCardToTop(new Card("Yellow"));
-		testDeck.addCardToTop(new Card("Pink"));
-		testDeck.addCardToTop(new Card("Teal"));
-		testDeck.addCardToTop(new Card("Orange"));
-		testDeck.addCardToTop(new Card("Brown"));
-		testDeck.addCardToTop(new Card("White"));
-		testDeck.addCardToTop(new Card("Black"));
-		testDeck.addCardToTop(new Card("Grey"));
-		testDeck.addCardToTop(new Card("Beige"));
-		testDeck.addCardToTop(new Card("Crimson"));
-		testDeck.addCardToTop(new Card("Scarlet"));
-		testDeck.addCardToTop(new Card("Violet"));
-		
-		
-		System.out.println(testDeck.getDeckList());
-		
-		testDeck.shuffle();
-		
-		System.out.println(testDeck.getDeckList());
-		
-		Deck deckToAdd = new Deck();
-		deckToAdd.addCardToTop(new Card("Maroon"));
-		deckToAdd.addCardToTop(new Card("Magenta"));
-		deckToAdd.addCardToTop(new Card("Ebony"));
-		
-		testDeck.addCardsToBottom(deckToAdd);
-		
-		System.out.println(testDeck.getDeckList());
-		
-		Deck[] newDecks = testDeck.split(3);
-		for (Deck d: newDecks)
-		{
-			System.out.println(d.getDeckSize());
-			System.out.println(d.getDeckList());
-			
-		}
-		}*/
+	
+	/**
+	 * Removes all cards from the deck.
+	 */
+	public void emptyDeck()
+	{
+		this.cards = new Card[MAXIMUM_DECK_SIZE];
+		this.deckSize = 0;
+	}
 	
 	public String getDeckList()
 	{
@@ -168,7 +138,7 @@ public class Deck {
 	 */
 	public void addCardToTop(Card c)
 	{
-		System.out.println(this.cards.length + " no of cards " + this.deckSize);
+		// System.out.println(this.cards.length + " no of cards " + this.deckSize);
 		this.cards[deckSize] = c;
 
 		//Increment deck size to register addition of a card.
@@ -228,6 +198,17 @@ public class Deck {
 	public Card getTopCard()
 	{
 		return cards[deckSize-1];
+	}
+	
+	/**
+	 * @return Whether the deck is full (i.e. contains all cards in the game).
+	 */
+	public boolean isFull()
+	{
+		if(deckSize == MAXIMUM_DECK_SIZE)
+			return true;
+		else
+			return false;
 	}
 	
 	public Card drawTopCard()
