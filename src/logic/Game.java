@@ -14,7 +14,8 @@ public class Game {
 	private Player operator; // ref to the person playing
 	private int currentPlayerTurn;
 	private int pRemainingCount; // number of players still active
-	private int round, draws; // holds count for total number of rounds and draws
+	private int roundCount = 1; // holds count for total number of rounds in a game
+	private int gameDrawCount = 0; // holds count for total number of cards draws in a game
 	private Deck mainDeck;
 	private ArrayList<Round> roundList;
 
@@ -22,8 +23,8 @@ public class Game {
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.pRemainingCount = this.noOfPlayers;
-		this.draws = 0;
-		this.round = 0;
+		this.gameDrawCount = 0;
+		this.roundCount = 0;
 		this.roundList = new ArrayList<Round>();
 		boolean pleaseShuffle = true;
 		Card[] pack = this.loadDeck();
@@ -32,11 +33,13 @@ public class Game {
 	}
 
 	public void init() {
-		// build a playerList 
+		// Add players to our player list 
 		this.addPlayersToGame();
+		// Save the cards from the deck text file
 		this.loadDeck();
+		// Divide all our starting cards up between players 
 		this.dealCards();
-		// if its first round selects random player to start game
+		// Assigns a random player number to begin the game
 		currentPlayerTurn = selectRandomPlayer();
 	}
 	
@@ -45,7 +48,7 @@ public class Game {
 	}
 	
 	public Round getCurrentRound() {
-		return this.roundList.get(round);
+		return this.roundList.get(roundCount);
 	}
 	
 	private void dealCards() {
@@ -53,7 +56,6 @@ public class Game {
 		for(int i = 0; i < this.noOfPlayers; i++ ) {
 			playerList[i].setDeck(splitCards[i]); 
 		}
-		System.out.println("deck size before topCardDraw(" + playerList[0].getDeck().getDeckSize());
 	}
 	
 	private Card[] loadDeck() {
@@ -62,7 +64,8 @@ public class Game {
 		try {
 			FileReader reader = new FileReader(filename); 
 			Scanner scan = new Scanner(reader);
-			scan.next(); // skip description 
+			// skip description line in text file
+			scan.next(); 
 			
 			for(int i = 0; i < Card.catNames.length; i++) {
 				Card.catNames[i] = scan.next();
@@ -76,12 +79,6 @@ public class Game {
 				    for(int i=0; i < values.length; i++) {
 				    	values[i] = scan.nextInt();
 				    }
-				    
-				   /* values[0] = scan.nextInt();
-				    values[1] = scan.nextInt();
-				    values[2] = scan.nextInt();
-				    values[3] = scan.nextInt();
-				    values[4] = scan.nextInt();*/
 				    topTrumpsPack[index] = new Card(desc, values);
 				    index++;
 			  }
@@ -138,19 +135,13 @@ public class Game {
 			Player[] playersInGame = rnd.getPlayersInRound();
 			Arrays.sort(playersInGame, new Round());
 			
-			// prints players cards for testing purposes 
-			for(int i = 0; i < playersInGame.length; i++) {
-				Card crd = playersInGame[i].getCurrentCard();
-				System.err.println(crd.printCard());
-			}
-			
 			int firstPlace = playersInGame[0].getCurrentCard().getRelevantCat(cat);
 			int secondPlace = playersInGame[1].getCurrentCard().getRelevantCat(cat);
-		    
 			// If we subtract 1st place score from 2nd place 
 			// then we can determine the round result
 			return firstPlace - secondPlace;
 	}
+	
 	/**
 	 * Checks if any active players in the game have lost all their cards
 	 * then change their active status to false and change the remaining player count 
@@ -174,11 +165,11 @@ public class Game {
 	}
 	
 	public int getRound() {
-		return this.round;
+		return this.roundCount;
 	}
 	
 	public void setRound(int n) {
-		this.round = n;
+		this.roundCount = n;
 	}
 
 	public Player getOperator() {
@@ -218,7 +209,8 @@ public class Game {
 				this.currentPlayerTurn = i;
 			}
 		} 
-		System.out.println("Switched turn to winner =  " + playerList[this.currentPlayerTurn].getName());
+		Session.view.displayPlayerChange(playerList[this.currentPlayerTurn]);
+
 	}
 	
 	public Player getPlayer(int query) {
@@ -249,11 +241,11 @@ public class Game {
 	public Card getHumansCurrentCard(){
 		return this.operator.getCurrentCard();
 	}
-	
-	public static void main(String[] args) {
-		Game testCase = new Game(4); 
-		System.out.println("the current player" + testCase.currentPlayerTurn);
-	}
+		
+	/**
+	 * The core game loop 
+	 * Call this method with an instance of Game object - it will run 
+	 */
 		
 	public void play() {
 		boolean gameOver = false;
@@ -290,7 +282,7 @@ public class Game {
 		private Card[] cardsDrawn;
 		
 		Round(Player startingPlayer) {
-			this.roundNo = roundList.size() + 1;
+			this.roundNo = roundCount += 1;
 			this.startingPlayer = startingPlayer;
 			this.startingCard = this.startingPlayer.getCurrentCard();
 			this.drawsOfTheCards = 0;
@@ -302,7 +294,6 @@ public class Game {
 			this.winningCard = null;
 			this.playersInRound = new Player[pRemainingCount];
 			this.run();
-			System.out.println("deck size after topCardDraw()" + playerList[0].getDeck().getDeckSize());
 		}
 		
 		public int getResultStatus() {
@@ -368,7 +359,7 @@ public class Game {
 				this.cardsDrawn[this.drawsOfTheCards] = p.getCurrentCard();
 				this.drawsOfTheCards++;
 			}
-			
+			gameDrawCount += this.drawsOfTheCards;
 			mainDeck.addCardsToBottom(this.cardsDrawn, this.drawsOfTheCards);
 			this.startingPlayer = playerList[currentPlayerTurn];
 			this.startingCard = this.startingPlayer.getCurrentCard();

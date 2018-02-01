@@ -14,7 +14,8 @@ import logic.Game.Round;
 public class TopTrumpsCLIApplication extends View {
 
 	private static Game cliGame;
-	private static Scanner scan = new Scanner(System.in); 
+	private static Scanner scan = new Scanner(System.in);
+	private int loadingTime = 5;
 	/**
 	 * This main method is called by TopTrumps.java when the user specifies that they want to run in
 	 * command line mode. The contents of args[0] is whether we should write game logs to a file.
@@ -79,6 +80,18 @@ public class TopTrumpsCLIApplication extends View {
 		System.out.println(str);
 	}
 	
+	private void loading()   {
+		try {
+			System.out.print("\n Loading.");
+			for(int i = 0; i < this.loadingTime; i++) {
+				Thread.sleep(1000);
+				System.out.print(".");
+			}
+		} catch (Exception InterruptedException) {
+			System.err.println("Failed to load");
+		}
+	}
+	
 	/**
 	 * Asks the user to choose the category to compare cards against for this round.
 	 * Only called when it is the human player's turn to choose.
@@ -87,6 +100,7 @@ public class TopTrumpsCLIApplication extends View {
 	 */
 	@Override
 	public int getCategory() {
+		loading();
 		print("1. Size");
 		print("2. Speed");
 		print("3. Range");
@@ -100,9 +114,10 @@ public class TopTrumpsCLIApplication extends View {
 
 	@Override
 	public void displayEndRound(Round rnd) {
+			loading();
 			print("Selected Category " +  Card.catNames[rnd.getCategory()]);
 			if(rnd.getResultStatus() == 1 ) {
-				print(rnd.getWinner().getName() + " Wins round!");
+				print(rnd.getWinner().getName() + " wins round " + rnd.getRoundNumber());
 				print("The Winning Card : \n" + rnd.getWinningCard().printCard());
 			} else if(rnd.getResultStatus() == 0) {
 				print("This category resulted in a tie.");
@@ -111,6 +126,7 @@ public class TopTrumpsCLIApplication extends View {
 
 	@Override
 	public void initalRoundInfo(Round rnd) {
+		loading();
 		print("Round : "+rnd.getRoundNumber());
 		print("Turn :" + rnd.getStartingPlayer().getName());
 		print(rnd.getStartingCard().printCard());
@@ -129,7 +145,12 @@ public class TopTrumpsCLIApplication extends View {
 	@Override
 	public void gameOver(Player player) {
 		print(player.getName() + " has won the game!");
-		print("With a deck size of " + player.getDeck().getDeckSize());
+	}
+
+	@Override
+	public void displayPlayerChange(Player player) {
+		loading();
+		print("Switched turn to winner =  " + player.getName());
 	}
 
 }

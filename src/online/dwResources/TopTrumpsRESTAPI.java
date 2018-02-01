@@ -136,5 +136,11 @@ public class TopTrumpsRESTAPI extends View {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void displayPlayerChange(Player player) {
+		// TODO Auto-generated method stub
+		
+	}
 		
 }
