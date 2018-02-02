@@ -147,8 +147,9 @@ public class Game {
 	/**
 	 * Checks if any active players in the game have lost all their cards
 	 * then change their active status to false and change the remaining player count 
+	 * @return 
 	 */
-	public void processEliminations() {
+	public boolean processEliminations() {
 		for(Player p : playerList) {
 			if(p.getActiveStatus()) { 
 				if(p.hasLost()) { 
@@ -158,7 +159,8 @@ public class Game {
 			}
 		}
 		// If there is only 1 player left playing then end the game
-		if(this.pRemainingCount <= 1) Session.view.gameOver(playerList[currentPlayerTurn]);
+		if(this.pRemainingCount <= 1) return true;
+		return false;
 	}
 	
 	/**
@@ -265,14 +267,15 @@ public class Game {
 			rnd.setWinner(winner);
 			rnd.setWinningCard(winner.getCurrentCard());
 			this.processWonRound(winner);
-			gameOver = rnd.getWinner().hasWon();
+			gameOver = winner.hasWon();
 		}
+		gameOver = this.processEliminations();
 		this.saveRound(rnd);
-		this.processEliminations();
 		Session.view.displayEndRound(rnd); 
 		}
-		Round finalRound = this.roundList.get(roundList.size() - 1);
-		Session.view.gameOver(finalRound.getWinner());
+		Player gameWinner = playerList[currentPlayerTurn];
+		System.out.println("deck size "+gameWinner.getDeck().getDeckSize());
+		Session.view.gameOver(gameWinner);
 	}
 
 	
