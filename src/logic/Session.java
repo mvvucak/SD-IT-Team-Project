@@ -20,8 +20,8 @@ public class Session {
 	}
 	
 	public static Game createNewGame(int aiSelect) {
-		Game newGame = new Game(aiSelect);
 		counter++;
+		Game newGame = new Game(aiSelect, counter);		
 		gameList.put(counter, newGame);
 		return newGame;
 	}
@@ -36,6 +36,7 @@ public class Session {
 	}
 
 	public static Game findGameById(int gameId) {
-			return gameList.get(gameId);
+		System.err.println("doing a wee search " + gameId);
+		return gameList.get(gameId);	
 	}
 }

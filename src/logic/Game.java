@@ -9,6 +9,7 @@ import java.io.*;
 
 public class Game {
 	
+	private int gameId;
 	private int noOfPlayers = 1;
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
@@ -20,7 +21,8 @@ public class Game {
 	private Deck mainDeck;
 	private ArrayList<Round> roundList;
 
-	public Game(int noOfAi) {
+	public Game(int noOfAi, int newGameId) {
+		this.gameId = newGameId;
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.pRemainingCount = this.noOfPlayers;
@@ -247,6 +249,19 @@ public class Game {
 	public Card getHumansCurrentCard(){
 		return this.operator.getCurrentCard();
 	}
+	
+	public int getGameId() {
+		return this.gameId;
+	}
+	
+	public Round startNewRound() {
+		Player p = this.getActivePlayer();
+		return new Round(p);
+	}
+	
+	public Deck getCommunalPile() {
+		return this.mainDeck;
+	}
 		
 	/**
 	 * The core game loop 
@@ -257,18 +272,10 @@ public class Game {
 		boolean gameOver = false;
 		while(!gameOver) {
 		Player p = this.getActivePlayer();
-		Round rnd = new Round(p);
+		Round rnd = this.startNewRound();
 		Session.view.initalRoundInfo(rnd);
-		int categoryChoice = p.chooseCategory();
-		rnd.setCategory(categoryChoice);
-		rnd.setResultStatus(this.findRoundResult(rnd));
-		if(rnd.getResultStatus() == 1) {
-			Player winner = rnd.playersInRound[0];
-			rnd.setWinner(winner);
-			rnd.setWinningCard(winner.getCurrentCard());
-			this.processWonRound(winner);
-			gameOver = winner.hasWon();
-		}
+		int categoryChoice = this.getActivePlayer().chooseCategory();
+		this.processTurn(rnd, categoryChoice);
 		gameOver = this.processEliminations();
 		this.saveRound(rnd);
 		Session.view.displayEndRound(rnd); 
@@ -277,7 +284,20 @@ public class Game {
 		System.out.println("deck size "+gameWinner.getDeck().getDeckSize());
 		Session.view.gameOver(gameWinner);
 	}
-
+	
+	public void processTurn(Round rnd, int categoryChoice) {
+		rnd.setCategory(categoryChoice);
+		rnd.setResultStatus(this.findRoundResult(rnd));
+		
+		if(rnd.getResultStatus() == 1) {
+			Player winner = rnd.playersInRound[0];
+			rnd.setWinner(winner);
+			rnd.setWinningCard(winner.getCurrentCard());
+			this.processWonRound(winner);
+			winner.hasWon();
+		}
+	}
+	
 	
 	public class Round implements Comparator<Player> {
 		

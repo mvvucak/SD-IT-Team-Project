@@ -15,8 +15,11 @@ import javax.ws.rs.core.MediaType;
 
 import online.configuration.TopTrumpsJSONConfiguration;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import logic.*;
 import logic.Game.Round;
@@ -34,7 +37,7 @@ import logic.Game.Round;
  * REST API methods in Dropwizard. You will need to replace these with
  * methods that allow a TopTrumps game to be controled from a Web page.
  */
-public class TopTrumpsRESTAPI extends View {
+public class TopTrumpsRESTAPI {
 
 	/** A Jackson Object writer. It allows us to turn Java objects
 	 * into JSON strings easily. */
@@ -90,6 +93,50 @@ public class TopTrumpsRESTAPI extends View {
         return card;
 	}
 	
+	@GET
+	@Path("/game/{gameid}/new_round")
+	/**
+	 * Request to start a new round
+	 * Response with communal pile size, and round 
+	 * @param gameid
+	 * @return - A Round
+	 * @throws IOException
+	 */
+	public String getRound(@PathParam("gameid") int gameId) throws IOException {
+		Game game = Session.findGameById(gameId);
+		Round round = game.startNewRound();
+		Player ai = round.getStartingPlayer();
+		if(!ai.isHuman()) {
+			int category = ai.chooseCategory();
+			game.processTurn(round, category);
+		}
+		
+        ObjectMapper mapper = new ObjectMapper();
+		ObjectNode objectNode1 = mapper.createObjectNode();
+		int communalCount = game.getCommunalPile().getDeckSize();
+		objectNode1.put("communalPile", communalCount);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(round);
+	}
+	/**
+	 * Request for human to select their category
+	 * @param gameid
+	 * @return - A Round
+	 * @throws IOException
+	 */
+	@POST
+	@Path("/game/{gameid}/")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String selectCategory(@PathParam("gameid") int gameId, @QueryParam("category") int category) throws IOException {
+		Game game = Session.findGameById(gameId);
+		Round currRnd = game.getCurrentRound();
+		game.processTurn(currRnd, category);
+        ObjectMapper mapper = new ObjectMapper();
+		ObjectNode objectNode1 = mapper.createObjectNode();
+		int communalCount = game.getCommunalPile().getDeckSize();
+		objectNode1.put("communalPile", communalCount);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(currRnd);
+	}	
+	
 	@POST
 	@Path("/game")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -97,50 +144,21 @@ public class TopTrumpsRESTAPI extends View {
 	    // check validity of number 
 		// if x < y Send 400 error msg 
 		if(aiSelect > this.availableAI) return null;
-		// try and create new game session for user
-		 Game game = Session.createNewGame(aiSelect);
-		 return oWriter.writeValueAsString(game);
-	}
-
-	@Override
-	public int getCategory() {
-		return 0;
-	}
-
-	@Override
-	public void initalRoundInfo(Round rnd) {
-		// TODO Auto-generated method stub
 		
-	}
+		 // Start new game for user to join
+	     Game game = Session.createNewGame(aiSelect);
+	     ObjectMapper mapper = new ObjectMapper();
+	      
+	     ObjectNode objectNode1 = mapper.createObjectNode();
+	      
+	     objectNode1.put("gameId", game.getGameId());
+	     objectNode1.put("identity", game.getOperator().getIdentity());
+	     objectNode1.put("numberPlayers", game.getNoOfPlayers());
+	        
+		 Player[] list = game.getPlayerList();   
+	     objectNode1.putPOJO("players", list);
 
-	@Override
-	public void displayEndRound(Round rnd) {
-		// TODO Auto-generated method stub
-		
+		 return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
 	}
-
-	@Override
-	public void displayDraw() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayElim(Player player) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void gameOver(Player player) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void displayPlayerChange(Player player) {
-		// TODO Auto-generated method stub
-		
-	}
-		
+				
 }
