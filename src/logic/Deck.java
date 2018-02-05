@@ -2,8 +2,11 @@ package logic;
 
 import java.util.Arrays;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Deck {
 
+	@JsonIgnore
 	private Card[] cards;
 	private int deckSize; // no of cards in current deck 
 	public static final int MAXIMUM_DECK_SIZE = 40;
@@ -109,7 +112,7 @@ public class Deck {
 		this.cards = new Card[MAXIMUM_DECK_SIZE];
 		this.deckSize = 0;
 	}
-	
+	@JsonIgnore
 	public String getDeckList()
 	{
 		String cardList = "";
@@ -119,7 +122,7 @@ public class Deck {
 		}
 		return cardList;
 	}
-	
+	@JsonIgnore
 	public String getDeckDetails()
 	{
 		String cardDetails = "";
@@ -194,7 +197,7 @@ public class Deck {
 			cards[j] = c[j];
 		}
 	}
-	
+	@JsonIgnore
 	public Card getTopCard()
 	{
 		return cards[deckSize-1];
@@ -210,7 +213,7 @@ public class Deck {
 		else
 			return false;
 	}
-	
+	@JsonIgnore
 	public Card drawTopCard()
 	{
 		Card toDraw = cards[deckSize-1];

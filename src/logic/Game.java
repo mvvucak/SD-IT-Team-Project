@@ -10,6 +10,7 @@ import java.io.*;
 public class Game {
 	
 	private int gameId;
+	private boolean isGameComplete;
 	private int noOfPlayers = 1;
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
@@ -23,6 +24,7 @@ public class Game {
 
 	public Game(int noOfAi, int newGameId) {
 		this.gameId = newGameId;
+		this.isGameComplete = false;
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.pRemainingCount = this.noOfPlayers;
@@ -46,7 +48,7 @@ public class Game {
 		currentPlayerTurn = selectRandomPlayer();
 	}
 	
-	private void saveRound(Round rnd) {
+	public void saveRound(Round rnd) {
 		this.roundList.add(rnd);
 	}
 	
@@ -120,6 +122,7 @@ public class Game {
 		this.mainDeck.emptyDeck(); 
 		// Pass control of the next round to the winner 
 		this.switchTurn(winner);
+		
 		return winner.hasWon();
 	}
 	 
@@ -151,18 +154,21 @@ public class Game {
 	 * then change their active status to false and change the remaining player count 
 	 * @return 
 	 */
-	public boolean processEliminations() {
+	public Player[] processEliminations() {
+		Player[] elims = new Player[this.pRemainingCount];
+		int count = 0;
 		for(Player p : playerList) {
 			if(p.getActiveStatus()) { 
 				if(p.hasLost()) { 
-					Session.view.displayElim(p);
+					elims[count] = p;
 					this.pRemainingCount--;
+					count++;
 				}
 			}
 		}
 		// If there is only 1 player left playing then end the game
-		if(this.pRemainingCount <= 1) return true;
-		return false;
+		if(this.pRemainingCount <= 1) this.isGameComplete = true;
+		return elims;
 	}
 	
 	/**
@@ -217,8 +223,6 @@ public class Game {
 				this.currentPlayerTurn = i;
 			}
 		} 
-		Session.view.displayPlayerChange(playerList[this.currentPlayerTurn]);
-
 	}
 	
 	public Player getPlayer(int query) {
@@ -255,12 +259,22 @@ public class Game {
 	}
 	
 	public Round startNewRound() {
-		Player p = this.getActivePlayer();
-		return new Round(p);
+		// Check if previous round was completed
+		if(this.getRound() > 1 ) { 
+			Round prevRnd = this.roundList.get(this.getRound() - 1);
+			if(prevRnd.getResultStatus() == -1) {
+				return prevRnd;
+			}
+		}
+		return new Round(this.getActivePlayer());
 	}
 	
 	public Deck getCommunalPile() {
 		return this.mainDeck;
+	}
+	
+	public boolean getIsGameComplete() {
+		return this.isGameComplete;
 	}
 		
 	/**
@@ -269,16 +283,16 @@ public class Game {
 	 */
 		
 	public void play() {
-		boolean gameOver = false;
-		while(!gameOver) {
-		Player p = this.getActivePlayer();
-		Round rnd = this.startNewRound();
-		Session.view.initalRoundInfo(rnd);
-		int categoryChoice = this.getActivePlayer().chooseCategory();
-		this.processTurn(rnd, categoryChoice);
-		gameOver = this.processEliminations();
-		this.saveRound(rnd);
-		Session.view.displayEndRound(rnd); 
+		while(!this.isGameComplete) {
+			// Player p = this.getActivePlayer();
+			Round rnd = this.startNewRound();
+			Session.view.initalRoundInfo(rnd);
+			int categoryChoice = this.getActivePlayer().chooseCategory();
+			this.processTurn(rnd, categoryChoice);
+			Session.view.displayPlayerChange(playerList[this.currentPlayerTurn]);
+			Session.view.displayElim(this.processEliminations());
+			this.saveRound(rnd);
+			Session.view.displayEndRound(rnd); 
 		}
 		Player gameWinner = playerList[currentPlayerTurn];
 		System.out.println("deck size "+gameWinner.getDeck().getDeckSize());
@@ -294,7 +308,7 @@ public class Game {
 			rnd.setWinner(winner);
 			rnd.setWinningCard(winner.getCurrentCard());
 			this.processWonRound(winner);
-			winner.hasWon();
+			this.isGameComplete = winner.hasWon();
 		}
 	}
 	

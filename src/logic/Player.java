@@ -7,14 +7,11 @@ public abstract class Player {
 	public static int counter = 0; // static variable
 	protected boolean active; // check if still playing 
 	protected int identity;
-	protected int cardsInHand;
-	@JsonIgnore
 	protected Deck deck;
 	protected Card currentCard;
 
 	Player(Deck d) {
 		deck = d;
-		this.cardsInHand = d.getDeckSize();
 		this.active = true;
 		this.identity = Player.counter;
 		Player.counter += 1;
@@ -22,7 +19,6 @@ public abstract class Player {
 	
 	Player()
 	{
-		this.cardsInHand = 0;
 		this.active = true;
 		this.identity = Player.counter;
 		Player.counter += 1;
@@ -57,10 +53,6 @@ public abstract class Player {
 	
 	public Deck getDeck() {
 		return this.deck;
-	}
-	
-	public int getCardsInHand() {
-		return this.cardsInHand;
 	}
 	
 	

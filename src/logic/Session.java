@@ -36,7 +36,6 @@ public class Session {
 	}
 
 	public static Game findGameById(int gameId) {
-		System.err.println("doing a wee search " + gameId);
 		return gameList.get(gameId);	
 	}
 }

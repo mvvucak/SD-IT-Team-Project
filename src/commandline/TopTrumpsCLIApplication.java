@@ -143,8 +143,11 @@ public class TopTrumpsCLIApplication extends View {
 	}
 
 	@Override
-	public void displayElim(Player player) {
-		print(player.getName() + " has been eliminated. Better luck next time punk");
+	public void displayElim(Player[] eliminations) {
+		for(Player player : eliminations) {
+			if(player == null) continue;
+			print(player.getName() + " has been eliminated. Better luck next time punk");
+		}
 	}
 
 	@Override
@@ -157,5 +160,6 @@ public class TopTrumpsCLIApplication extends View {
 		loading();
 		print("Switched turn to winner =  " + player.getName());
 	}
+
 
 }

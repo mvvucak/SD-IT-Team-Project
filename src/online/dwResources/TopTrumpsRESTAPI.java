@@ -109,14 +109,34 @@ public class TopTrumpsRESTAPI {
 		if(!ai.isHuman()) {
 			int category = ai.chooseCategory();
 			game.processTurn(round, category);
+			game.processEliminations();
+			game.saveRound(round);
 		}
-		
+        ObjectMapper mapper = new ObjectMapper();
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(round);
+	}
+	
+	@GET
+	@Path("/game/{gameid}/end_results")
+	/**
+	 * Request to start a new round
+	 * Response with communal pile size, and round 
+	 * @param gameid
+	 * @return - A Round
+	 * @throws IOException
+	 */
+	public String getEndRoudResults(@PathParam("gameid") int gameId) throws IOException {
+		Game game = Session.findGameById(gameId);		
         ObjectMapper mapper = new ObjectMapper();
 		ObjectNode objectNode1 = mapper.createObjectNode();
 		int communalCount = game.getCommunalPile().getDeckSize();
+		objectNode1.put("gameOver", game.getIsGameComplete());
 		objectNode1.put("communalPile", communalCount);
-		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(round);
+		Player[] players = game.getPlayerList();
+		objectNode1.putPOJO("playerList", players);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
 	}
+	
 	/**
 	 * Request for human to select their category
 	 * @param gameid
@@ -129,11 +149,12 @@ public class TopTrumpsRESTAPI {
 	public String selectCategory(@PathParam("gameid") int gameId, @QueryParam("category") int category) throws IOException {
 		Game game = Session.findGameById(gameId);
 		Round currRnd = game.getCurrentRound();
-		game.processTurn(currRnd, category);
+		if(category > 0 && category < 5) {
+			game.processTurn(currRnd, category);
+			game.processEliminations();
+			game.saveRound(currRnd);
+		}
         ObjectMapper mapper = new ObjectMapper();
-		ObjectNode objectNode1 = mapper.createObjectNode();
-		int communalCount = game.getCommunalPile().getDeckSize();
-		objectNode1.put("communalPile", communalCount);
 		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(currRnd);
 	}	
 	

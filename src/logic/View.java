@@ -18,7 +18,7 @@ public abstract class View {
 	
 	abstract public void displayPlayerChange(Player player);
 
-	abstract public void displayElim(Player player); 
+	abstract public void displayElim(Player[] players); 
 	
 	abstract public void gameOver(Player player);
 	
