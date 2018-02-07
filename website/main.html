@@ -8,9 +8,15 @@
     <link rel="stylesheet" href="css/bootstrap.css">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="javascript/script.js"></script>
+    <!-- <script type="text/javascript" src="javascript/shipData.js"></script> -->
+
+    <script type="text/javascript" src="javascript/newGame.js"></script>
+    <script type="text/javascript" src="javascript/rounds.js"></script>
+    <script type="text/javascript" src="javascript/roundFinished.js"></script>
 </head>
 
-<body>
+<!-- <body onload="disabledBtns()"> -->
 
   <div class="container">
     <div class="row">
@@ -18,7 +24,6 @@
         <div id="top-bar">
           <div>
             <div id="playBtns" class="btn-lg">
-              <!-- change this onclick -->
               <button id="1" class="btn-lg" onclick="getAiNum(this.id)">1 AI player</button>
               <button id="2" class="btn-lg" onclick="getAiNum(this.id)">2 AI players</button>
               <button id="3" class="btn-lg" onclick="getAiNum(this.id)">3 AI players</button>
@@ -33,17 +38,19 @@
 
         <div class="col-md-9">
           <div id="card-header">
+            <h3>there are x cards in your deck </h3>
             <h2>YOUR CURRENT CARD</h2>
-            <h5>SPACESHIP NAME</h5>
+            <h5 id="humanShipName">SPACESHIP NAME</h5>
           </div>
         </div>
 
-          <div id="btn-group" onclick="printAiCard()">
-            <button class="btn-lg" onclick="this.disabled=true;">SIZE<br>(#)</button>
-            <button class="btn-lg">SPEED<br>(#)</button>
-            <button class="btn-lg">RANGE<br>(#)</button>
-            <button class="btn-lg">FIREPOWER<br>(#)</button>
-            <button class="btn-lg">CARGO<br>(#)</button>
+<!-- onclick="this.disabled=true;" -->
+          <div id="btn-group" onclick="cats(); humanCardDetails(); aiPileDetails(); comPileDetails();">
+            <button class="btn-lg" id="size">SIZE<br>(#)</button>
+            <button class="btn-lg" id="speed">SPEED<br>(#)</button>
+            <button class="btn-lg" id="range">RANGE<br>(#)</button>
+            <button class="btn-lg" id="firepower">FIREPOWER<br>(#)</button>
+            <button class="btn-lg" id="cargo">CARGO<br>(#)</button>
           </div>
 
         </div>
@@ -51,43 +58,53 @@
         <div class="grid-container">
           <div id="col-md-3">
               <div id="card-info">
-                <div id="aiNum1"></div>
+                <div class = "aiNum" id="aiNum1"></div>
                 <div id="slot1"></div>
               </div>
+              <br>
+              <div id="deck1"></div>
           </div>
 
 
           <div id="col-md-3">
               <div id="card-info">
-                <div id="aiNum2"></div>
-                <div id="slot2">
+                <div class = "aiNum" id="aiNum2"></div>
+                <div id="slot2"></div>
                 </div>
-              </div>
+              <br>
+              <div id="deck2"></div>
           </div>
 
           <div id="col-md-3">
               <div id="card-info">
-                <div id="aiNum3"></div>
-                <div id="slot3">
+                <div class = "aiNum" id="aiNum3"></div>
+                <div id="slot3"></div>
                 </div>
-              </div>
+              <br>
+              <div id="deck3"></div>
           </div>
 
           <div id="col-md-3">
               <div id="card-info">
-                <div id="aiNum4"></div>
-                <div id="slot4">
+                <div class = "aiNum" id="aiNum4"></div>
+                <div id="slot4"></div>
                 </div>
-              </div>
+              <br>
+              <div id="deck4"></div>
           </div>
         </div>
+
+    <div class="col-md-12">
+        <div id="comPile">
+
+        </div>
+    </div>
 
     <div class="row">
         <div id="round-end">
-          <button class="btn-lg" id="aa" onclick="nextRound();highlightWinner();">SHOW WINNER</button>
+          <button class="btn-lg" id="aa" onclick="nextRound();displayWinner();">SHOW WINNER</button>
         </div>
       </div>
-
 
       <div class="row">
         <div class="col-md-12">
@@ -97,7 +114,10 @@
         </div>
       </div>
 
-    <script type="text/javascript" src="javascript/script.js"></script>
+  <script type="text/javascript">
+    // console.log(myNewGameData);
+    // console.log(computerRound);
+  </script>
 
   </body>
 </html>

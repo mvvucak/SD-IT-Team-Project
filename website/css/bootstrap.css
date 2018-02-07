@@ -67,6 +67,10 @@ body {
   padding: 10%;
 }
 
+.aiNum {
+  text-decoration: underline;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: 20% 20% 20% 20%;
@@ -75,6 +79,7 @@ body {
 }
 
 #btn-group {
+  disabled: true;
   padding-left: 37%;
 }
 
