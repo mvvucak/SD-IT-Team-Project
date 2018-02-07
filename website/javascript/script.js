@@ -1,9 +1,7 @@
 var AiNum = 0;
 
 function disabledBtns() {
-    document.getElementById("speed").disabled = true;
-    document.getElementById("size").disabled = true;
-    console.log("button pressed");
+    document.getElementById("btn-group").hidden = true;
 }
 
 function redirect() {
@@ -15,7 +13,7 @@ function redirect() {
 function roundNum() {
     var round = 1;
     document.getElementById("roundHeader").innerHTML = "Round " + round;
-    document.getElementById("playBtns").style.visibility="hidden";
+    document.getElementById("playBtns").hidden = true;
 }
 
 // function displayCurrentPlayer() {
@@ -28,6 +26,7 @@ function getAiNum(chosenAi) {
     AiNum = Number(chosenAi);
     showOpponents();
     roundNum();
+    document.getElementById("btn-group").hidden = false;
     //displayCurrentPlayer();
 }
 
@@ -63,18 +62,33 @@ var n = 1;
 
 function humanCardDetails() {
     var i = 0;
+    var n = 1;
     var humanPlayer;
+    var catNames = ["size", "speed", "range", "firepower", "cargo"];
     for (i = 0; i < 5; i++) {
-    if (JSON.stringify(computerRound.round.playersInRound[i].human) == false) {
-        console.log("hi");
-    } else {
-        console.log("no");
+        if (computerRound.round.playersInRound[i].human == true) {
+            var humanDeck = JSON.stringify(computerRound.round.playersInRound[i].deck.deckSize);
+            var humanShipName = JSON.stringify(computerRound.round.playersInRound[i].currentCard.description);
+            console.log(humanShipName);
+            document.getElementById("humanDeck").innerHTML = "there are " + humanDeck + " cards in your deck <br>";
+            document.getElementById("humanShipName").innerHTML = "your ship is " + humanShipName;
+
+            for (j = 0; j < 5; j++) {
+                var humanCatVals = JSON.stringify(computerRound.round.playersInRound[i].currentCard.cat[j]);
+                //console.log(humanCatVals);
+                document.getElementById("cat" + n).innerHTML += catNames[j] + "<br>" + humanCatVals;
+                n++;
+            }
+
+        }
     }
 }
-    // var humanShip = JSON.stringify(computerRound.round.playersInRound[i].currentCard.description);
-    // console.log(humanShip);
 
+function humanCatChoice(chosenCat) {
+    var humanChoice = chosenCat;
+    console.log(chosenCat);
 }
+
 
 function cats() {
     var n = 1;
@@ -84,8 +98,8 @@ function cats() {
     var shipCatName;
     var shipName;
     var numOfShips = myNewGameData.numberPlayers;
-    var numCats = 5;
     var catNames = ["size", "speed", "range", "firepower", "cargo"];
+    var numCats = catNames.length;
 
     for (i = 0; i < numOfShips - 1; i++) { //-1 to exclude human
         shipName = JSON.stringify(computerRound.round.playersInRound[i].currentCard.description);

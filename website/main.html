@@ -16,14 +16,14 @@
     <script type="text/javascript" src="javascript/roundFinished.js"></script>
 </head>
 
-<!-- <body onload="disabledBtns()"> -->
+<body onload="disabledBtns()">
 
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <div id="top-bar">
           <div>
-            <div id="playBtns" class="btn-lg">
+            <div id="playBtns" class="btn-lg" onclick="humanCardDetails();">
               <button id="1" class="btn-lg" onclick="getAiNum(this.id)">1 AI player</button>
               <button id="2" class="btn-lg" onclick="getAiNum(this.id)">2 AI players</button>
               <button id="3" class="btn-lg" onclick="getAiNum(this.id)">3 AI players</button>
@@ -38,19 +38,18 @@
 
         <div class="col-md-9">
           <div id="card-header">
-            <h3>there are x cards in your deck </h3>
-            <h2>YOUR CURRENT CARD</h2>
-            <h5 id="humanShipName">SPACESHIP NAME</h5>
+            <h3 id="humanDeck"></h3>
+            <h3 id="humanShipName"></h3>
           </div>
         </div>
 
 <!-- onclick="this.disabled=true;" -->
-          <div id="btn-group" onclick="cats(); humanCardDetails(); aiPileDetails(); comPileDetails();">
-            <button class="btn-lg" id="size">SIZE<br>(#)</button>
-            <button class="btn-lg" id="speed">SPEED<br>(#)</button>
-            <button class="btn-lg" id="range">RANGE<br>(#)</button>
-            <button class="btn-lg" id="firepower">FIREPOWER<br>(#)</button>
-            <button class="btn-lg" id="cargo">CARGO<br>(#)</button>
+          <div id="btn-group" onclick="cats(); aiPileDetails(); comPileDetails();">
+            <button class="btn-lg" id="cat1" onclick="humanCatChoice(this.id)"></button>
+            <button class="btn-lg" id="cat2" onclick="humanCatChoice(this.id)"></button>
+            <button class="btn-lg" id="cat3" onclick="humanCatChoice(this.id)"></button>
+            <button class="btn-lg" id="cat4" onclick="humanCatChoice(this.id)"></button>
+            <button class="btn-lg" id="cat5" onclick="humanCatChoice(this.id)"></button>
           </div>
 
         </div>
