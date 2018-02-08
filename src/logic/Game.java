@@ -111,7 +111,6 @@ public class Game {
 	/**
 	 * Adds cards from communal pile to the winner's deck and makes them the active player.
 	 * Also checks if they have won the game.
-	 * NOTE: Could be made private, likely only called within here. -Mat
 	 * @param winner The winner of the latest round. can be changed to an index -Mat
 	 * @return Whether the winner has also won the game by checking their deck.
 	 */
@@ -128,7 +127,7 @@ public class Game {
 	 
 	/**
 	 * Transfer any cards in the communal pile to the overall winner.
-	 * @param winner The winner of the game.
+	 * @param winner The player that won the game.
 	 */
 	private void finishGame(Player winner)
 	{
@@ -307,7 +306,7 @@ public class Game {
 		Player gameWinner = playerList[currentPlayerTurn];
 		//Transfer remaining communal pile cards to winner's deck.
 		this.finishGame(gameWinner);
-		System.out.println("deck size "+gameWinner.getDeck().getDeckSize());
+		System.out.println( gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
 		Session.view.gameOver(gameWinner);
 	}
 	
