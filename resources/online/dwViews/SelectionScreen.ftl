@@ -23,9 +23,8 @@
     <body onload="initalize()"> <!-- Call the initalize method when the page loads -->
     	
     	<div class="container">
-
-			<!-- Add your HTML Here -->
-		
+		<h1>Game Selection Screen</h1>
+		<h2>{{gameName}}</h2>
 		</div>
 		
 		<script type="text/javascript">
@@ -38,7 +37,8 @@
 				// --------------------------------------------------------------------------
 				
 				// For example, lets call our sample methods
-				helloJSONList();
+				var initParams = ["options"]
+				xhrSendReq(initParams);
 				helloWord("Student");
 				
 			}
@@ -78,10 +78,18 @@
 		<script type="text/javascript">
 		
 			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
-			function helloJSONList() {
-			
+			function xhrSendReq(params) {
+				var arrLen = params.length;
+				var paramsToUrl = "";
+				for(i = 0; i < arrLen; i++) {
+					if(i == 0) {
+					 paramsToUrl += params[i];
+					} else {
+					 paramsToUrl += "/" + params[i];
+					}		
+				}
 				// First create a CORS request, this is the message we are going to send (a get request in this case)
-				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloJSONList"); // Request type and URL
+				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/" + paramsToUrl); // Request type and URL
 				
 				// Message is not sent yet, but we can check that the browser supports CORS
 				if (!xhr) {

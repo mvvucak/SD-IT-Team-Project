@@ -23,7 +23,7 @@
     <body onload="initalize()"> <!-- Call the initalize method when the page loads -->
     	
     	<div class="container">
-
+		<h1> Hello ${User} </h1>
 			<!-- Add your HTML Here -->
 		
 		</div>
