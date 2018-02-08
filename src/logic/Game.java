@@ -126,13 +126,15 @@ public class Game {
 	}
 	 
 	/**
-	 * Transfer any cards in the communal pile to the overall winner.
-	 * @param winner The player that won the game.
+	 * Transfer any cards in the communal pile to the overall winner and signal end of game.
 	 */
-	private void finishGame(Player winner)
+	private void finishGame()
 	{
-		winner.addWonCards(this.mainDeck);
+		Player gameWinner = playerList[currentPlayerTurn];
+		//Transfer remaining communal pile cards to winner's deck.
+		gameWinner.addWonCards(this.mainDeck);
 		this.mainDeck.emptyDeck();
+		this.isGameComplete = true;
 	}
 	
 	/**
@@ -176,7 +178,7 @@ public class Game {
 			}
 		}
 		// If there is only 1 player left playing then end the game
-		if(this.pRemainingCount <= 1) this.isGameComplete = true;
+		if(this.pRemainingCount <= 1) this.finishGame();
 		return elims;
 	}
 	
@@ -304,9 +306,7 @@ public class Game {
 			Session.view.displayEndRound(rnd); 
 		}
 		Player gameWinner = playerList[currentPlayerTurn];
-		//Transfer remaining communal pile cards to winner's deck.
-		this.finishGame(gameWinner);
-		System.out.println( gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
+		System.out.println(gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
 		Session.view.gameOver(gameWinner);
 	}
 	
