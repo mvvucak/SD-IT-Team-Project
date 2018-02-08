@@ -102,7 +102,7 @@ public class Game {
 		// Populate remainder of array with AIs
 		int len = this.playerList.length;
 		for(int i = 1; i < len; i++) {
-			this.playerList[i] = new ComputerPlayer();
+			this.playerList[i] = new ComputerPlayer(i);
 		}
 
 	}
@@ -117,8 +117,8 @@ public class Game {
 	 */
 	private boolean processWonRound(Player winner)
 	{
-		winner.addWonCards(this.mainDeck); //Assuming mainDeck will hold each round's cards Yes -Mat.
-		//Remove card references from the common pile.
+		//Add communal pile cards to the winner's deck and empty the communal pile.
+		winner.addWonCards(this.mainDeck);
 		this.mainDeck.emptyDeck(); 
 		// Pass control of the next round to the winner 
 		this.switchTurn(winner);
@@ -126,7 +126,16 @@ public class Game {
 		return winner.hasWon();
 	}
 	 
-
+	/**
+	 * Transfer any cards in the communal pile to the overall winner.
+	 * @param winner The winner of the game.
+	 */
+	private void finishGame(Player winner)
+	{
+		winner.addWonCards(this.mainDeck);
+		this.mainDeck.emptyDeck();
+	}
+	
 	/**
 	 * compare integer if the first number is higher than second then it returns a 1
 	 * zero if it equals each other and negative if first number is smaller than second
@@ -296,6 +305,8 @@ public class Game {
 			Session.view.displayEndRound(rnd); 
 		}
 		Player gameWinner = playerList[currentPlayerTurn];
+		//Transfer remaining communal pile cards to winner's deck.
+		this.finishGame(gameWinner);
 		System.out.println("deck size "+gameWinner.getDeck().getDeckSize());
 		Session.view.gameOver(gameWinner);
 	}
