@@ -53,7 +53,7 @@ public class Game {
 	}
 	
 	public Round getCurrentRound() {
-		return this.roundList.get(roundCount);
+		return this.roundList.get(this.roundCount);
 	}
 	
 	private void dealCards() {
@@ -140,7 +140,8 @@ public class Game {
 			// we need to get all current players in game to being comparing
 			Player[] playersInGame = rnd.getPlayersInRound();
 			Arrays.sort(playersInGame, new Round());
-			//if(pRemainingCount <= 1) return 1; 
+			// When 1 Player remaining then they automatically win the round
+			if(pRemainingCount <= 1) return 1; 
 
 			int firstPlace = playersInGame[0].getCurrentCard().getRelevantCat(cat);
 			int secondPlace = playersInGame[1].getCurrentCard().getRelevantCat(cat);
@@ -286,12 +287,12 @@ public class Game {
 		while(!this.isGameComplete) {
 			// Player p = this.getActivePlayer();
 			Round rnd = this.startNewRound();
+			this.saveRound(rnd);
 			Session.view.initalRoundInfo(rnd);
 			int categoryChoice = this.getActivePlayer().chooseCategory();
 			this.processTurn(rnd, categoryChoice);
 			Session.view.displayPlayerChange(playerList[this.currentPlayerTurn]);
 			Session.view.displayElim(this.processEliminations());
-			this.saveRound(rnd);
 			Session.view.displayEndRound(rnd); 
 		}
 		Player gameWinner = playerList[currentPlayerTurn];
@@ -309,6 +310,7 @@ public class Game {
 			rnd.setWinningCard(winner.getCurrentCard());
 			this.processWonRound(winner);
 			this.isGameComplete = winner.hasWon();
+			// we need a game over method for adding the main deck in the final
 		}
 	}
 	

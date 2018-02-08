@@ -105,15 +105,18 @@ public class TopTrumpsRESTAPI {
 	public String getRound(@PathParam("gameid") int gameId) throws IOException {
 		Game game = Session.findGameById(gameId);
 		Round round = game.startNewRound();
+		game.saveRound(round);
 		Player ai = round.getStartingPlayer();
 		if(!ai.isHuman()) {
 			int category = ai.chooseCategory();
 			game.processTurn(round, category);
 			game.processEliminations();
-			game.saveRound(round);
 		}
         ObjectMapper mapper = new ObjectMapper();
-		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(round);
+		ObjectNode objectNode1 = mapper.createObjectNode();
+		objectNode1.put("yourTurn", ai.isHuman());
+		objectNode1.putPOJO("round", round);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
 	}
 	
 	@GET
@@ -133,7 +136,7 @@ public class TopTrumpsRESTAPI {
 		objectNode1.put("gameOver", game.getIsGameComplete());
 		objectNode1.put("communalPile", communalCount);
 		Player[] players = game.getPlayerList();
-		objectNode1.putPOJO("playerList", players);
+		objectNode1.putPOJO("players", players);
 		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
 	}
 	
@@ -144,16 +147,17 @@ public class TopTrumpsRESTAPI {
 	 * @throws IOException
 	 */
 	@POST
-	@Path("/game/{gameid}/")
+	@Path("/game/{gameid}/select")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String selectCategory(@PathParam("gameid") int gameId, @QueryParam("category") int category) throws IOException {
 		Game game = Session.findGameById(gameId);
 		Round currRnd = game.getCurrentRound();
-		if(category > 0 && category < 5) {
+		System.err.println("Human selected " + category);
+//		if(category > 0 && category < 5) {
 			game.processTurn(currRnd, category);
 			game.processEliminations();
-			game.saveRound(currRnd);
-		}
+			//game.saveRound(currRnd);
+//		}
         ObjectMapper mapper = new ObjectMapper();
 		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(currRnd);
 	}	
