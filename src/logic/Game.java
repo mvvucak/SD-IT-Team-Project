@@ -10,7 +10,7 @@ import java.io.*;
 public class Game {
 	
 	private int gameId;
-	private boolean isGameComplete;
+	private boolean isGameComplete, writeLog;
 	private int noOfPlayers = 1;
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
@@ -21,6 +21,7 @@ public class Game {
 	private int roundCount, gameDrawCount; 
 	private Deck mainDeck;
 	private ArrayList<Round> roundList;
+	private LogWriter logger;
 
 	public Game(int noOfAi, int newGameId) {
 		this.gameId = newGameId;
@@ -34,14 +35,34 @@ public class Game {
 		boolean pleaseShuffle = true;
 		Card[] pack = this.loadDeck();
 		this.mainDeck = new Deck(pack, pleaseShuffle);
+		
 		this.init();
+	}
+	
+	public Game(int noOfAi, int newGameId, boolean writeLog) {
+		this.gameId = newGameId;
+		this.isGameComplete = false;
+		this.noOfPlayers = this.noOfPlayers + noOfAi;
+		this.playerList = new Player[this.noOfPlayers];
+		this.pRemainingCount = this.noOfPlayers;
+		this.roundCount = 0;
+		this.gameDrawCount = 0;
+		this.writeLog = writeLog;
+		if(this.writeLog) this.logger = new LogWriter(playerList);
+		this.roundList = new ArrayList<Round>();
+		
+		boolean pleaseShuffle = true;
+		Card[] pack = this.loadDeck();
+		
+		this.mainDeck = new Deck(pack, pleaseShuffle);
+		if(writeLog) logger.sendDeck(this.mainDeck);
+		this.init();
+		
 	}
 
 	public void init() {
 		// Add players to our player list 
 		this.addPlayersToGame();
-		// Save the cards from the deck text file
-		this.loadDeck();
 		// Divide all our starting cards up between players 
 		this.dealCards();
 		// Assigns a random player number to begin the game
@@ -61,6 +82,7 @@ public class Game {
 		for(int i = 0; i < this.noOfPlayers; i++ ) {
 			playerList[i].setDeck(splitCards[i]); 
 		}
+		if(writeLog) logger.writePlayerDecks();
 	}
 	
 	private Card[] loadDeck() {
@@ -91,6 +113,7 @@ public class Game {
 		} catch(IOException e) {
 			
 		}
+		if(writeLog) logger.sendDeck(topTrumpsPack);
 		return topTrumpsPack; 
 	}
 
@@ -300,12 +323,23 @@ public class Game {
 			this.saveRound(rnd);
 			Session.view.initalRoundInfo(rnd);
 			int categoryChoice = this.getActivePlayer().chooseCategory();
+			
+			if(writeLog) this.logger.writeCategoryInfo(categoryChoice);
+					
 			this.processTurn(rnd, categoryChoice);
+			
 			Session.view.displayPlayerChange(playerList[this.currentPlayerTurn]);
 			Session.view.displayElim(this.processEliminations());
-			Session.view.displayEndRound(rnd); 
+			Session.view.displayEndRound(rnd);
+			if(writeLog) this.logger.writePlayerDecks(rnd.getRoundNumber());
 		}
 		Player gameWinner = playerList[currentPlayerTurn];
+		if(writeLog) 
+			{
+				this.logger.writeWinner(gameWinner);
+				System.err.println("plz");
+				this.logger.saveLog();
+			}
 		System.out.println(gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
 		Session.view.gameOver(gameWinner);
 	}
@@ -321,6 +355,10 @@ public class Game {
 			this.processWonRound(winner);
 			this.isGameComplete = winner.hasWon();
 			// we need a game over method for adding the main deck in the final
+		}
+		else if(rnd.getResultStatus() == 0)
+		{
+			if(this.writeLog) this.logger.sendDeck(this.mainDeck);
 		}
 	}
 	
@@ -411,6 +449,7 @@ public class Game {
 				this.cardsDrawn[this.drawsOfTheCards] = p.getCurrentCard();
 				this.drawsOfTheCards++;
 			}
+			if(writeLog) logger.writeTopCards();
 			gameDrawCount += this.drawsOfTheCards;
 			mainDeck.addCardsToBottom(this.cardsDrawn, this.drawsOfTheCards);
 			this.startingPlayer = playerList[currentPlayerTurn];
