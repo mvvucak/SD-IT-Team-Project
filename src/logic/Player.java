@@ -7,6 +7,7 @@ public abstract class Player {
 	public static int counter = 0; // static variable
 	protected boolean active; // check if still playing 
 	protected int identity;
+	protected String name;
 	protected Deck deck;
 	protected Card currentCard;
 
@@ -26,7 +27,14 @@ public abstract class Player {
 	
 	public abstract boolean isHuman();
 	
-	public abstract String getName();
+	/**
+	 * Returns the player's name ("You" for the human player, a numbered noun for an AI).
+	 * @return The player's name.
+	 */
+	public String getName()
+	{
+		return this.name;
+	}
 	
 	public abstract int chooseCategory();
 	

@@ -102,7 +102,7 @@ public class Game {
 		// Populate remainder of array with AIs
 		int len = this.playerList.length;
 		for(int i = 1; i < len; i++) {
-			this.playerList[i] = new ComputerPlayer();
+			this.playerList[i] = new ComputerPlayer(i);
 		}
 
 	}
@@ -111,14 +111,13 @@ public class Game {
 	/**
 	 * Adds cards from communal pile to the winner's deck and makes them the active player.
 	 * Also checks if they have won the game.
-	 * NOTE: Could be made private, likely only called within here. -Mat
 	 * @param winner The winner of the latest round. can be changed to an index -Mat
 	 * @return Whether the winner has also won the game by checking their deck.
 	 */
 	private boolean processWonRound(Player winner)
 	{
-		winner.addWonCards(this.mainDeck); //Assuming mainDeck will hold each round's cards Yes -Mat.
-		//Remove card references from the common pile.
+		//Add communal pile cards to the winner's deck and empty the communal pile.
+		winner.addWonCards(this.mainDeck);
 		this.mainDeck.emptyDeck(); 
 		// Pass control of the next round to the winner 
 		this.switchTurn(winner);
@@ -126,7 +125,18 @@ public class Game {
 		return winner.hasWon();
 	}
 	 
-
+	/**
+	 * Transfer any cards in the communal pile to the overall winner and signal end of game.
+	 */
+	private void finishGame()
+	{
+		Player gameWinner = playerList[currentPlayerTurn];
+		//Transfer remaining communal pile cards to winner's deck.
+		gameWinner.addWonCards(this.mainDeck);
+		this.mainDeck.emptyDeck();
+		this.isGameComplete = true;
+	}
+	
 	/**
 	 * compare integer if the first number is higher than second then it returns a 1
 	 * zero if it equals each other and negative if first number is smaller than second
@@ -168,7 +178,7 @@ public class Game {
 			}
 		}
 		// If there is only 1 player left playing then end the game
-		if(this.pRemainingCount <= 1) this.isGameComplete = true;
+		if(this.pRemainingCount <= 1) this.finishGame();
 		return elims;
 	}
 	
@@ -296,7 +306,7 @@ public class Game {
 			Session.view.displayEndRound(rnd); 
 		}
 		Player gameWinner = playerList[currentPlayerTurn];
-		System.out.println("deck size "+gameWinner.getDeck().getDeckSize());
+		System.out.println(gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
 		Session.view.gameOver(gameWinner);
 	}
 	

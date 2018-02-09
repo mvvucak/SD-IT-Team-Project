@@ -8,6 +8,7 @@ public final class HumanPlayer extends Player {
 	public HumanPlayer(Deck d)
 	{
 		super(d);
+		this.name = "You";
 	}
 	
 	public HumanPlayer()
@@ -22,14 +23,8 @@ public final class HumanPlayer extends Player {
 		return true;
 	}	
 	
-	/**
-	 * Returns the player's identity, always "You" for a human player.
-	 * @return The player's name.
-	 */
-	public String getName()
-	{
-		return "You";
-	}
+	
+	
 
 	@Override
 	public int chooseCategory() {
