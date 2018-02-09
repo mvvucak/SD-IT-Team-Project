@@ -32,7 +32,7 @@ public class TopTrumpsCLIApplication extends View {
 		// Loop until the user wants to exit the game
 		while (!userWantsToQuit) {
 			boolean start = displayOptionMenu();
-			if(start) Session.createNewGame(4);
+			if(start) Session.createNewGame(4, writeGameLogsToFile);
 			int newGameId = Session.getLatestGame();
 			Game game = Session.findGameById(newGameId);
 			game.play();

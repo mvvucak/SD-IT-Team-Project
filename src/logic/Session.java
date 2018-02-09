@@ -26,6 +26,14 @@ public class Session {
 		return newGame;
 	}
 	
+	public static Game createNewGame(int aiSelect, boolean writeLog)
+	{
+		counter++;
+		Game newGame = new Game(aiSelect, counter, writeLog);		
+		gameList.put(counter, newGame);
+		return newGame;
+	}
+	
 	public static void setView(View viewType) {
 		// set the type of view you want to display to
 		view = viewType;

@@ -14,6 +14,7 @@ public final class HumanPlayer extends Player {
 	public HumanPlayer()
 	{
 		super();
+		this.name = "You";
 	}
 
 	/**
