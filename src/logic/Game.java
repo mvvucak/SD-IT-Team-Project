@@ -53,7 +53,7 @@ public class Game {
 	}
 	
 	public Round getCurrentRound() {
-		return this.roundList.get(this.roundCount);
+		return this.roundList.get(roundList.size() - 1);
 	}
 	
 	private void dealCards() {
@@ -312,6 +312,59 @@ public class Game {
 			this.isGameComplete = winner.hasWon();
 			// we need a game over method for adding the main deck in the final
 		}
+	}
+	
+	public void updateDatabase(Player gameWinner) {
+		int roundsPlayed = this.roundList.size();
+		boolean humanWinner; 
+		int drawsPerGame = 0; // how many ties 
+		int[] playerWinCount = new int[4]; // an array counting the number of round wins associated with a player
+		
+		// build playerWinCount array
+		//  Because you can have a max of 5 players 
+		for(int i = 0; i < playerWinCount.length; i++) {
+			// When lower than players in game then start them at 0
+			if(i < this.playerList.length) {
+				playerWinCount[i] = 0;
+			} else if(i > this.playerList.length) {
+				playerWinCount[i] = -1;
+			}
+		}
+		
+		for(int i = 0; i < roundsPlayed; i++) {
+			Round rnd = roundList.get(i);
+			// check if round resulted in draw and increment 
+			if(rnd.getResultStatus() == 0) {
+				drawsPerGame++;
+			}
+			
+			for(int j = 0; j < playerList.length; j++) {
+				if(gameWinner == playerList[j]) {
+					playerWinCount[j]++;
+				}
+			}
+		}
+		
+		int human = playerWinCount[0];
+		int comp1 = playerWinCount[1];
+		int comp2 = playerWinCount[2];
+		int comp3 = playerWinCount[3];
+		int comp4 = playerWinCount[4];
+		
+		if(this.operator == gameWinner) {
+			humanWinner = true;
+		} else {
+			humanWinner = false;
+		}
+		
+		//open 
+		//Connection1.connection();
+		
+		// send all game values - the order: draws per game, 
+		// human winner (boolean rounds, 
+		
+		//Connection1.insert( drawsPerGame, humanWinner, roundsPlayed, human, comp1, comp2, comp3, comp4);
+		
 	}
 	
 	

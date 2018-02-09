@@ -152,12 +152,8 @@ public class TopTrumpsRESTAPI {
 	public String selectCategory(@PathParam("gameid") int gameId, @QueryParam("category") int category) throws IOException {
 		Game game = Session.findGameById(gameId);
 		Round currRnd = game.getCurrentRound();
-		System.err.println("Human selected " + category);
-//		if(category > 0 && category < 5) {
-			game.processTurn(currRnd, category);
-			game.processEliminations();
-			//game.saveRound(currRnd);
-//		}
+		game.processTurn(currRnd, category);
+		game.processEliminations();
         ObjectMapper mapper = new ObjectMapper();
 		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(currRnd);
 	}	
@@ -184,6 +180,19 @@ public class TopTrumpsRESTAPI {
 	     objectNode1.putPOJO("players", list);
 
 		 return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
+	}
+	
+	@GET
+	@Path("/stats")
+	/**
+	 * Request to start a new round
+	 * Response with communal pile size, and round 
+	 * @param gameid
+	 * @return - A Round
+	 * @throws IOException
+	 */
+	public String getTopTrumpsStats(@PathParam("gameid") int gameId) throws IOException {
+		return oWriter.writeValueAsString("Placeholder for stats");
 	}
 				
 }
