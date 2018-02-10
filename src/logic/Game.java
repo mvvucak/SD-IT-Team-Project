@@ -371,7 +371,7 @@ public class Game {
 	public void updateDatabase(Player gameWinner) {
 		Connection1 db = new Connection1();
 		int roundsPlayed = this.roundList.size();
-		boolean humanWinner; 
+		boolean humanWinner;
 		int drawsPerGame = 0; // how many draws (a.k.a ties)  
 		int[] playerWinCount = new int[5]; // an array counting the number of round wins associated with a player
 		
@@ -421,7 +421,7 @@ public class Game {
 		
 		db.insert( drawsPerGame, humanWinner, roundsPlayed, 
 				human, comp1, comp2, comp3, comp4);
-		
+		db.closeconnection();
 	}
 	
 	

@@ -211,7 +211,7 @@ public class Connection1 {
 		gamenumber++;
 		Statement stmt = null;
 		String insert = "INSERT INTO \"Game\".game\r\n" + "Values ('" + gamenumber + "','"
-		+ humanwinner +"','\" + drawspergame + \"',2'" + roundspergame + "','"+ human + "','"+ player2 + "','"+ player3 + "','"+ player4 + "','"+ player5 + "')";
+		+ humanwinner +"','" + drawspergame + "','" + roundspergame + "','"+ human + "','"+ player2 + "','"+ player3 + "','"+ player4 + "','"+ player5 + "')";
 		/// 
 		try {
 			stmt = connection.createStatement();
