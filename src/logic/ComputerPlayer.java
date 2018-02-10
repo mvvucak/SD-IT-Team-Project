@@ -2,14 +2,21 @@ package logic;
 
 public final class ComputerPlayer extends Player {
 	
-	public ComputerPlayer(Deck d)
+	public ComputerPlayer(Deck d, int n)
 	{
 		super(d);
+		this.name = "Computer " + n;
 	}
 	
 	public ComputerPlayer()
 	{
 		super();
+	}
+	
+	public ComputerPlayer(int n)
+	{
+		super();
+		this.name = "Computer " + n;
 	}
 
 	@Override
@@ -22,23 +29,12 @@ public final class ComputerPlayer extends Player {
 	}
 	
 	/**
-	 * Returns the AI player's name, represented by its ID.
-	 * @return The player's name.
-	 */
-	public String getName()
-	{
-		String name = "Computer " + this.identity;
-		return name;
-	}
-
-	@Override
-	/**
 	 * Automatically chooses the category to compare against.
 	 * Choice is made based on the highest value on the AI's current card.
 	 * @return The name of the chosen category.
 	 */
-	public String chooseCategory() {
-		String bestCategory = this.currentCard.getHighest();
+	public int chooseCategory() {
+		int bestCategory = this.currentCard.getHighest();
 		return bestCategory;
 	}
 

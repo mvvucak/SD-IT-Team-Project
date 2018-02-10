@@ -1,10 +1,13 @@
 package logic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public abstract class Player {
  
 	public static int counter = 0; // static variable
 	protected boolean active; // check if still playing 
 	protected int identity;
+	protected String name;
 	protected Deck deck;
 	protected Card currentCard;
 
@@ -24,9 +27,16 @@ public abstract class Player {
 	
 	public abstract boolean isHuman();
 	
-	public abstract String chooseCategory();
+	/**
+	 * Returns the player's name ("You" for the human player, a numbered noun for an AI).
+	 * @return The player's name.
+	 */
+	public String getName()
+	{
+		return this.name;
+	}
 	
-	public abstract String getName();
+	public abstract int chooseCategory();
 	
 	/**
 	 * Removes the top card from the player's deck and adds it to their hand.
@@ -35,6 +45,24 @@ public abstract class Player {
 	{
 		this.currentCard = deck.drawTopCard();
 	}
+	
+	/**
+	 * Adds cards to the bottom of the player's deck when they win a round.
+	 * @param d A deck containing all claimed cards (min. 2).
+	 */
+	public void addWonCards(Deck d)
+	{
+		this.deck.addCardsToBottom(d);
+	}
+	
+	public void setDeck(Deck val) {
+		 this.deck = val;
+	}
+	
+	public Deck getDeck() {
+		return this.deck;
+	}
+	
 	
 	/**
 	 * Returns the details of the card currently in the player's hand.
@@ -55,8 +83,28 @@ public abstract class Player {
 		System.out.println(cardDetails);
 	}
 
-	public boolean activePlayer(Player otherPerson) {
+	public boolean comparePlayer(Player otherPerson) {
 		return this.identity == otherPerson.getIdentity();
+	}
+	
+	/**
+	 * @return Whether the player has won (i.e. has all the cards in the game).
+	 */
+	public boolean hasWon()
+	{
+		return deck.isFull();
+	}
+	
+	public boolean hasLost() {
+		final boolean ELIMINATED = true;
+		final boolean NOT_ELIMINATED = false;
+// 
+		if(this.deck.isEmpty()) {
+			this.active = false; 
+			return ELIMINATED;
+		}
+		return NOT_ELIMINATED;
+		
 	}
 
 	public int getIdentity() {
@@ -98,5 +146,6 @@ public abstract class Player {
 		// return top card in deck
 		return this.currentCard;
 	}
+	
 
 }

@@ -4,11 +4,12 @@ import java.util.HashMap;
 
 public class Session {
 	private static HashMap<Integer, Game> gameList = new HashMap<Integer, Game>();  
+	public static View view;
 	private static Session instance = null;
-	private static int counter = 1;
+	private static int counter = 0;
 	
 	private Session() {
-		
+		// Exists only to defeat instantiation
 	}
 	
 	public static Session getInstance() {
@@ -19,13 +20,30 @@ public class Session {
 	}
 	
 	public static Game createNewGame(int aiSelect) {
-		Game newGame = new Game(aiSelect);
-		gameList.put(counter, newGame);
 		counter++;
+		Game newGame = new Game(aiSelect, counter);		
+		gameList.put(counter, newGame);
 		return newGame;
+	}
+	
+	public static Game createNewGame(int aiSelect, boolean writeLog)
+	{
+		counter++;
+		Game newGame = new Game(aiSelect, counter, writeLog);		
+		gameList.put(counter, newGame);
+		return newGame;
+	}
+	
+	public static void setView(View viewType) {
+		// set the type of view you want to display to
+		view = viewType;
+	}
+	
+	public static int getLatestGame() {
+		return counter;
 	}
 
 	public static Game findGameById(int gameId) {
-			return gameList.get(gameId);
+		return gameList.get(gameId);	
 	}
 }
