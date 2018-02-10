@@ -176,7 +176,7 @@ public class TopTrumpsRESTAPI {
 	     objectNode1.put("identity", game.getOperator().getIdentity());
 	     objectNode1.put("numberPlayers", game.getNoOfPlayers());
 	        
-		 Player[] list = game.getPlayerList();   
+		 Player[] list = game.getPlayerList();
 	     objectNode1.putPOJO("players", list);
 
 		 return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);

@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Scanner;
 
+import database.Connection1;
+
 import java.io.*;
+
+
 
 public class Game {
 	
@@ -57,7 +61,8 @@ public class Game {
 		this.mainDeck = new Deck(pack, pleaseShuffle);
 		if(writeLog) logger.sendDeck(this.mainDeck);
 		this.init();
-		
+		Connection1 db = new Connection1();
+		db.connection();
 	}
 
 	public void init() {
@@ -171,13 +176,13 @@ public class Game {
 			int cat = rnd.getCategory();
 			Card.indexToCompare = cat;
 			// we need to get all current players in game to being comparing
-			Player[] playersInGame = rnd.getPlayersInRound();
-			Arrays.sort(playersInGame, new Round());
+			Player[] playerScoreboard = rnd.getPlayerScoreboard();
+			Arrays.sort(playerScoreboard, new Round());
 			// When 1 Player remaining then they automatically win the round
 			if(pRemainingCount <= 1) return 1; 
 
-			int firstPlace = playersInGame[0].getCurrentCard().getRelevantCat(cat);
-			int secondPlace = playersInGame[1].getCurrentCard().getRelevantCat(cat);
+			int firstPlace = playerScoreboard[0].getCurrentCard().getRelevantCat(cat);
+			int secondPlace = playerScoreboard[1].getCurrentCard().getRelevantCat(cat);
 			// If we subtract 1st place score from 2nd place 
 			// then we can determine the round result
 			return firstPlace - secondPlace;
@@ -342,6 +347,7 @@ public class Game {
 			}
 		System.out.println(gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
 		Session.view.gameOver(gameWinner);
+		this.updateDatabase(gameWinner);
 	}
 	
 	public void processTurn(Round rnd, int categoryChoice) {
@@ -363,10 +369,11 @@ public class Game {
 	}
 	
 	public void updateDatabase(Player gameWinner) {
+		Connection1 db = new Connection1();
 		int roundsPlayed = this.roundList.size();
 		boolean humanWinner; 
-		int drawsPerGame = 0; // how many ties 
-		int[] playerWinCount = new int[4]; // an array counting the number of round wins associated with a player
+		int drawsPerGame = 0; // how many draws (a.k.a ties)  
+		int[] playerWinCount = new int[5]; // an array counting the number of round wins associated with a player
 		
 		// build playerWinCount array
 		//  Because you can have a max of 5 players 
@@ -404,14 +411,16 @@ public class Game {
 		} else {
 			humanWinner = false;
 		}
-		
+		System.out.println(humanWinner);
 		//open 
-		//Connection1.connection();
-		
+		db.connection();
 		// send all game values - the order: draws per game, 
 		// human winner (boolean rounds, 
+		// int drawspergame, boolean humanwinner, int ties, int roundspergame, 
+		// int human, int player2, int player3, int player4, int player5
 		
-		//Connection1.insert( drawsPerGame, humanWinner, roundsPlayed, human, comp1, comp2, comp3, comp4);
+		db.insert( drawsPerGame, humanWinner, roundsPlayed, 
+				human, comp1, comp2, comp3, comp4);
 		
 	}
 	
@@ -421,7 +430,7 @@ public class Game {
 		private int roundNo, category, drawsOfTheCards, resultStatus; 
 		private Player startingPlayer, winner;
 		private Card startingCard, winningCard;
-		private Player[] playersInRound;
+		private Player[] playersInRound, playerScoreboard;
 		private Card[] cardsDrawn;
 		
 		Round(Player startingPlayer) {
@@ -436,6 +445,7 @@ public class Game {
 			this.cardsDrawn = new Card[pRemainingCount];
 			this.winningCard = null;
 			this.playersInRound = new Player[pRemainingCount];
+			this.playerScoreboard = new Player[pRemainingCount];
 			this.run();
 		}
 		
@@ -459,6 +469,10 @@ public class Game {
 		
 		public Player[] getPlayersInRound() {
 			return this.playersInRound;
+		}
+		
+		public Player[] getPlayerScoreboard() {
+			return this.playerScoreboard;
 		}
 
 		public void setCardsDrawn(Card[] allCardsDrawn) {
@@ -494,14 +508,20 @@ public class Game {
 		}
 
 		private void run() {
-			
+			int pos = 0;
 			for(Player p : playerList) {
-				if(p.getActiveStatus() == false) continue;
+				if(p.getActiveStatus() == false) {
+					pos++;
+					continue;
+				}
 				p.drawCard();
-				this.playersInRound[this.drawsOfTheCards] = p;
+				this.playersInRound[pos] = p;
+				this.playerScoreboard[pos] = p;
 				this.cardsDrawn[this.drawsOfTheCards] = p.getCurrentCard();
+				pos++;
 				this.drawsOfTheCards++;
 			}
+			
 			if(writeLog) logger.writeTopCards();
 			gameDrawCount += this.drawsOfTheCards;
 			mainDeck.addCardsToBottom(this.cardsDrawn, this.drawsOfTheCards);
