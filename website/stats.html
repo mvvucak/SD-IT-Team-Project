@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css?family=Oswald:300" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="javascript/TopTrumpsHttp.js"></script>
   <!-- <script type="text/javascript" src="javascript/data.js"></script> -->
   <script type="text/javascript" src="javascript/shipData.js"></script>
 
@@ -40,38 +41,21 @@
       <h3>Most rounds</h3>
         <p id="numRounds"></p>
     </div>
-<<<<<<< HEAD
 </div>
-
-  <script type="text/javascript">
-=======
 
 </div>
   </div>
     <script type="text/javascript">
->>>>>>> ac2bd7e6a1215e7fd57094b6015427855ae2fe56
-    console.log(globalData);
-    var element = document.querySelector('#top-bar');
-    console.log(element);
-<<<<<<< HEAD
-    var allGameStats = JSON.stringify(globalData.stats[1].humanWinner);
-=======
-    console.log(globalData.stats)
-    var allGameStats = JSON.stringify(globalData.stats);
->>>>>>> ac2bd7e6a1215e7fd57094b6015427855ae2fe56
-    element.innerHTML = allGameStats;
-
-    winCount();
-    avgDraws();
-    //shipName();
-    mostRounds();
-
-
+    var gameAjax = new TopTrumpsHttp();
+    gameAjax.statistics();
+    window.addEventListener("pulled-stats", function(event) {
+        console.log(event.data);
+        document.querySelector("#totDraws").innerHTML = event.data.averageDraws;
+        document.querySelector("#numRounds").innerHTML = event.data.longestGame;
+        document.querySelector("#aiWin").innerHTML = event.data.computerWins;
+        document.querySelector("#hWin").innerHTML = event.data.humanWins;
+    });
   </script>
-<<<<<<< HEAD
-</body>
-<!-- >>>>>>> 9fc3082a3f76bc447b051d64dd285fcfc08ad7c4 -->
-=======
+
   </body>
->>>>>>> ac2bd7e6a1215e7fd57094b6015427855ae2fe56
 </html>
