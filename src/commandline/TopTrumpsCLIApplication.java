@@ -98,10 +98,6 @@ public class TopTrumpsCLIApplication extends View {
 		System.out.println(str);
 	}
 
-//	public static void print(int num) {
-//		System.out.println(num);
-//	}
-//	
 	public void loading()   {
 		try {
 			System.out.print("\n Loading.");

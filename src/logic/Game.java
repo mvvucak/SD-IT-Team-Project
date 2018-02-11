@@ -15,6 +15,7 @@ public class Game {
 	
 	private int gameId;
 	private boolean isGameComplete, writeLog;
+	private Player gameWinner;
 	private int noOfPlayers = 1;
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
@@ -30,6 +31,7 @@ public class Game {
 	public Game(int noOfAi, int newGameId) {
 		this.gameId = newGameId;
 		this.isGameComplete = false;
+		this.gameWinner = null;
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.pRemainingCount = this.noOfPlayers;
@@ -158,9 +160,9 @@ public class Game {
 	 */
 	private void finishGame()
 	{
-		Player gameWinner = playerList[currentPlayerTurn];
+		this.gameWinner = playerList[currentPlayerTurn];
 		//Transfer remaining communal pile cards to winner's deck.
-		gameWinner.addWonCards(this.mainDeck);
+		this.gameWinner.addWonCards(this.mainDeck);
 		this.mainDeck.emptyDeck();
 		this.isGameComplete = true;
 	}
@@ -315,6 +317,10 @@ public class Game {
 	public boolean getIsGameComplete() {
 		return this.isGameComplete;
 	}
+	
+	public Player getGameWinner() {
+		return this.gameWinner;
+	}
 		
 	/**
 	 * The core game loop 
@@ -338,16 +344,16 @@ public class Game {
 			Session.view.displayEndRound(rnd);
 			if(writeLog) this.logger.writePlayerDecks(rnd.getRoundNumber());
 		}
-		Player gameWinner = playerList[currentPlayerTurn];
+		this.gameWinner = playerList[currentPlayerTurn];
 		if(writeLog) 
 			{
 				this.logger.writeWinner(gameWinner);
 				System.err.println("plz");
 				this.logger.saveLog();
 			}
-		System.out.println(gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
-		Session.view.gameOver(gameWinner);
-		this.updateDatabase(gameWinner);
+		System.out.println(this.gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
+		Session.view.gameOver(this.gameWinner);
+		this.updateDatabase();
 	}
 	
 	public void processTurn(Round rnd, int categoryChoice) {
@@ -355,7 +361,7 @@ public class Game {
 		rnd.setResultStatus(this.findRoundResult(rnd));
 		
 		if(rnd.getResultStatus() == 1) {
-			Player winner = rnd.playersInRound[0];
+			Player winner = rnd.playerScoreboard[0];
 			rnd.setWinner(winner);
 			rnd.setWinningCard(winner.getCurrentCard());
 			this.processWonRound(winner);
@@ -368,7 +374,9 @@ public class Game {
 		}
 	}
 	
-	public void updateDatabase(Player gameWinner) {
+	public void updateDatabase() {
+		if(this.gameWinner == null) return;
+		
 		Connection1 db = new Connection1();
 		int roundsPlayed = this.roundList.size();
 		boolean humanWinner;
@@ -378,12 +386,7 @@ public class Game {
 		// build playerWinCount array
 		//  Because you can have a max of 5 players 
 		for(int i = 0; i < playerWinCount.length; i++) {
-			// When lower than players in game then start them at 0
-			if(i < this.playerList.length) {
 				playerWinCount[i] = 0;
-			} else if(i > this.playerList.length) {
-				playerWinCount[i] = -1;
-			}
 		}
 		
 		for(int i = 0; i < roundsPlayed; i++) {
@@ -394,7 +397,7 @@ public class Game {
 			}
 			
 			for(int j = 0; j < playerList.length; j++) {
-				if(gameWinner == playerList[j]) {
+				if(rnd.getWinner() == playerList[j]) {
 					playerWinCount[j]++;
 				}
 			}
@@ -406,7 +409,7 @@ public class Game {
 		int comp3 = playerWinCount[3];
 		int comp4 = playerWinCount[4];
 		
-		if(this.operator == gameWinner) {
+		if(this.operator == this.gameWinner) {
 			humanWinner = true;
 		} else {
 			humanWinner = false;
@@ -418,7 +421,6 @@ public class Game {
 		// human winner (boolean rounds, 
 		// int drawspergame, boolean humanwinner, int ties, int roundspergame, 
 		// int human, int player2, int player3, int player4, int player5
-		
 		db.insert( drawsPerGame, humanWinner, roundsPlayed, 
 				human, comp1, comp2, comp3, comp4);
 		db.closeconnection();
@@ -510,10 +512,7 @@ public class Game {
 		private void run() {
 			int pos = 0;
 			for(Player p : playerList) {
-				if(p.getActiveStatus() == false) {
-					pos++;
-					continue;
-				}
+				if(p.getActiveStatus() == false) continue;
 				p.drawCard();
 				this.playersInRound[pos] = p;
 				this.playerScoreboard[pos] = p;
