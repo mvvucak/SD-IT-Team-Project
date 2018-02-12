@@ -1,6 +1,10 @@
 package online.configuration;
 
 
+import javax.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.istack.internal.NotNull;
+
 import io.dropwizard.Configuration;
 
 /** This class represents the TopTrumps.json file that Dropwizard loads
@@ -8,8 +12,8 @@ import io.dropwizard.Configuration;
  * not need to edit it.
  * @author richardm
  */
-public class TopTrumpsJSONConfiguration extends Configuration{
-
+public class TopTrumpsJSONConfiguration extends Configuration {
+	  
 	/** This is the location of the deck file to load */
 	String deckFile;
 	
@@ -35,6 +39,5 @@ public class TopTrumpsJSONConfiguration extends Configuration{
 	public void setNumAIPlayers(int numAIPlayers) {
 		this.numAIPlayers = numAIPlayers;
 	}
-	
 	
 }

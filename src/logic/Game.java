@@ -426,7 +426,6 @@ public class Game {
 		db.closeconnection();
 	}
 	
-	
 	public class Round implements Comparator<Player> {
 		
 		private int roundNo, category, drawsOfTheCards, resultStatus; 

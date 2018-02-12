@@ -1,127 +1,116 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <title>Top Trumps</title>
 
-	<head>
-		<!-- Web page title -->
-    	<title>Top Trumps</title>
-    	
-    	<!-- Import JQuery, as it provides functions you will probably find useful (see https://jquery.com/) -->
-    	<script src="https://code.jquery.com/jquery-2.1.1.js"></script>
-    	<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
-    	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/flick/jquery-ui.css">
+    <link rel="stylesheet" href="/assets/css/bootstrap.css">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/assets/javascript/TopTrumpsHttp.js"></script> 
+    <script type="text/javascript" src="/assets/javascript/script.js"></script>
 
-		<!-- Optional Styling of the Website, for the demo I used Bootstrap (see https://getbootstrap.com/docs/4.0/getting-started/introduction/) -->
-		<link rel="stylesheet" href="http://dcs.gla.ac.uk/~richardm/TREC_IS/bootstrap.min.css">
-    	<script src="http://dcs.gla.ac.uk/~richardm/vex.combined.min.js"></script>
-    	<script>vex.defaultOptions.className = 'vex-theme-os';</script>
-    	<link rel="stylesheet" href="http://dcs.gla.ac.uk/~richardm/assets/stylesheets/vex.css"/>
-    	<link rel="stylesheet" href="http://dcs.gla.ac.uk/~richardm/assets/stylesheets/vex-theme-os.css"/>
-    	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
 
-	</head>
+<body onload="onReady()">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="top-bar">
+          <div>
+            <div id="playBtns" class="btn-lg" > <!-- onclick="humanCardDetails();" -->
+              <button id="1" class="btn-lg" onclick="getAiNum(this.id)">1 AI player</button>
+              <button id="2" class="btn-lg" onclick="getAiNum(this.id)">2 AI players</button>
+              <button id="3" class="btn-lg" onclick="getAiNum(this.id)">3 AI players</button>
+              <button id="4" class="btn-lg" onclick="getAiNum(this.id)">4 AI players</button>
+            </div>
+          </div>
+          <h1 id="roundHeader"></h1>
+          <h2 id="turnDisplay"></h2>
+          </div>
+        </div>
+      </div>
 
-    <body onload="initalize()"> <!-- Call the initalize method when the page loads -->
-    	
-    	<div class="container">
-		<h1> Hello ${User} </h1>
-			<!-- Add your HTML Here -->
-		
-		</div>
-		
-		<script type="text/javascript">
-		
-			// Method that is called on page load
-			function initalize() {
-			
-				// --------------------------------------------------------------------------
-				// You can call other methods you want to run when the page first loads here
-				// --------------------------------------------------------------------------
-				
-				// For example, lets call our sample methods
-				helloJSONList();
-				helloWord("Student");
-				
-			}
-			
-			// -----------------------------------------
-			// Add your other Javascript methods Here
-			// -----------------------------------------
-		
-			// This is a reusable method for creating a CORS request. Do not edit this.
-			function createCORSRequest(method, url) {
-  				var xhr = new XMLHttpRequest();
-  				if ("withCredentials" in xhr) {
+       <div class="tt-card"> 
 
-    				// Check if the XMLHttpRequest object has a "withCredentials" property.
-    				// "withCredentials" only exists on XMLHTTPRequest2 objects.
-    				xhr.open(method, url, true);
+        <div class="col-md-9">
+          <div id="card-header">
+            <h3 id="humanDeck"></h3>
+            <h3 id="humanShipName"></h3>
+          </div>
+        </div>
 
-  				} else if (typeof XDomainRequest != "undefined") {
+          <div id="btn-group">
+            <button class="btn-lg cat-choice" value="0" id="cat1" onclick="humanCatChoice(this.value)"></button>
+            <button class="btn-lg cat-choice" value="1" id="cat2" onclick="humanCatChoice(this.value)"></button>
+            <button class="btn-lg cat-choice" value="2" id="cat3" onclick="humanCatChoice(this.value)"></button>
+            <button class="btn-lg cat-choice" value="3" id="cat4" onclick="humanCatChoice(this.value)"></button>
+            <button class="btn-lg cat-choice" value="4" id="cat5" onclick="humanCatChoice(this.value)"></button>
+          </div>
 
-    				// Otherwise, check if XDomainRequest.
-    				// XDomainRequest only exists in IE, and is IE's way of making CORS requests.
-    				xhr = new XDomainRequest();
-    				xhr.open(method, url);
+        </div>
+        </div>
 
- 				 } else {
+        <div class="grid-container">
+          <div id="col-md-3">
+              <div id="card-info" class="tt-card">
+                <div class = "aiNum" id="aiNum"></div>
+                <div id="slot"></div>
+              </div>
+              <br>
+              <div id="deck"></div>
+          </div>
 
-    				// Otherwise, CORS is not supported by the browser.
-    				xhr = null;
 
-  				 }
-  				 return xhr;
-			}
-		
-		</script>
-		
-		<!-- Here are examples of how to call REST API Methods -->
-		<script type="text/javascript">
-		
-			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
-			function helloJSONList() {
-			
-				// First create a CORS request, this is the message we are going to send (a get request in this case)
-				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloJSONList"); // Request type and URL
-				
-				// Message is not sent yet, but we can check that the browser supports CORS
-				if (!xhr) {
-  					alert("CORS not supported");
-				}
+          <div id="col-md-3">
+              <div id="card-info" class="tt-card">
+                <div class = "aiNum" id="aiNum"></div>
+                <div id="slot"></div>
+                </div>
+              <br>
+              <div id="deck"></div>
+          </div>
 
-				// CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
-				// to do when the response arrives 
-				xhr.onload = function(e) {
- 					var responseText = xhr.response; // the text of the response
-					alert(responseText); // lets produce an alert
-				};
-				
-				// We have done everything we need to prepare the CORS request, so send it
-				xhr.send();		
-			}
-			
-			// This calls the helloJSONList REST method from TopTrumpsRESTAPI
-			function helloWord(word) {
-			
-				// First create a CORS request, this is the message we are going to send (a get request in this case)
-				var xhr = createCORSRequest('GET', "http://localhost:7777/toptrumps/helloWord?Word="+word); // Request type and URL+parameters
-				
-				// Message is not sent yet, but we can check that the browser supports CORS
-				if (!xhr) {
-  					alert("CORS not supported");
-				}
+          <div id="col-md-3">
+              <div id="card-info" class="tt-card">
+                <div class = "aiNum" id="aiNum"></div>
+                <div id="slot"></div>
+                </div>
+              <br>
+              <div id="deck"></div>
+          </div>
 
-				// CORS requests are Asynchronous, i.e. we do not wait for a response, instead we define an action
-				// to do when the response arrives 
-				xhr.onload = function(e) {
- 					var responseText = xhr.response; // the text of the response
-					alert(responseText); // lets produce an alert
-				};
-				
-				// We have done everything we need to prepare the CORS request, so send it
-				xhr.send();		
-			}
+          <div id="col-md-3">
+              <div id="card-info" class="tt-card">
+                <div class = "aiNum" id="aiNum"></div>
+                <div id="slot"></div>
+                </div>
+              <br>
+              <div id="deck"></div>
+          </div>
+        </div>
 
-		</script>
-		
-		</body>
+   <div class="col-md-12">
+        <div id="rndCat">
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div id="comPile">
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="round-end">
+          <button class="btn-lg" id="aa" onclick="nextRound();">BEGIN</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div id="stats-btn">
+            <button class="btn-lg" onclick="window.location.href='/toptrumps/stats/'">VIEW PAST GAME STATISTICS</button>
+          </div>
+        </div>
+      </div>
+  </body>
 </html>
