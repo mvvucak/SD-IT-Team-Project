@@ -13,6 +13,7 @@ import online.dwResources.TopTrumpsRESTAPI;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -54,7 +55,7 @@ public class TopTrumpsOnlineApplication extends Application<TopTrumpsJSONConfigu
 	    cors.setInitParameter("allowedMethods", "OPTIONS,GET,PUT,POST,DELETE,HEAD");
 
 	    // Add URL mapping
-	    cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+	    cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*"); 
 		
 	    // Dropwizard expresses things that the user can ask for as resources. We have two of
 	    // these, the REST api and the HTML/Javascript Webpages
@@ -86,5 +87,7 @@ public class TopTrumpsOnlineApplication extends Application<TopTrumpsJSONConfigu
 	@Override
     public void initialize(Bootstrap<TopTrumpsJSONConfiguration> bootstrap) {
     	bootstrap.addBundle(new ViewBundle<TopTrumpsJSONConfiguration>());
+    	bootstrap.addBundle(new AssetsBundle("/assets/", "/assets", null));
     }
+
 }

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import database.Connection1;
 import logic.*;
 import logic.Game.Round;
 
@@ -134,6 +135,7 @@ public class TopTrumpsRESTAPI {
 		ObjectNode objectNode1 = mapper.createObjectNode();
 		int communalCount = game.getCommunalPile().getDeckSize();
 		objectNode1.put("gameOver", game.getIsGameComplete());
+		objectNode1.putPOJO("gameWinner", game.getGameWinner());
 		objectNode1.put("communalPile", communalCount);
 		Player[] players = game.getPlayerList();
 		objectNode1.putPOJO("players", players);
@@ -152,14 +154,12 @@ public class TopTrumpsRESTAPI {
 	public String selectCategory(@PathParam("gameid") int gameId, @QueryParam("category") int category) throws IOException {
 		Game game = Session.findGameById(gameId);
 		Round currRnd = game.getCurrentRound();
-		System.err.println("Human selected " + category);
-//		if(category > 0 && category < 5) {
-			game.processTurn(currRnd, category);
-			game.processEliminations();
-			//game.saveRound(currRnd);
-//		}
+		game.processTurn(currRnd, category);
+		game.processEliminations();
         ObjectMapper mapper = new ObjectMapper();
-		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(currRnd);
+    	ObjectNode objectNode1 = mapper.createObjectNode();
+		objectNode1.putPOJO("round", currRnd);
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
 	}	
 	
 	@POST
@@ -180,10 +180,48 @@ public class TopTrumpsRESTAPI {
 	     objectNode1.put("identity", game.getOperator().getIdentity());
 	     objectNode1.put("numberPlayers", game.getNoOfPlayers());
 	        
-		 Player[] list = game.getPlayerList();   
+		 Player[] list = game.getPlayerList();
 	     objectNode1.putPOJO("players", list);
 
 		 return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
+	}
+	
+	@POST
+	@Path("/stats/{gameid}/save")
+	/**
+	 * Request to start a new round
+	 * Response with communal pile size, and round 
+	 * @param gameid
+	 * @return - A Round
+	 * @throws IOException
+	 */
+	public String saveTopTrumpsStats(@PathParam("gameid") int gameId) throws IOException {
+		Game game = Session.findGameById(gameId);
+		game.updateDatabase();
+		return oWriter.writeValueAsString("Successful");
+	}
+	
+	@GET
+	@Path("/stats")
+	/**
+	 * Request to start a new round
+	 * Response with communal pile size, and round 
+	 * @param gameid
+	 * @return - A Round
+	 * @throws IOException
+	 */
+	public String getTopTrumpsStats(@PathParam("gameid") int gameId) throws IOException {
+		Connection1 db = new Connection1(); 
+		db.connection();
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode objectNode1 = mapper.createObjectNode();
+		objectNode1.put("totnumGames", db.numberofgames());
+		objectNode1.put("computerWins", db.ai());
+		objectNode1.put("humanWins", db.humanwin());
+		objectNode1.put("averageDraws", db.drawsum());
+		objectNode1.put("longestGame", db.maxroundspergame());
+		db.closeconnection();
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectNode1);
 	}
 				
 }

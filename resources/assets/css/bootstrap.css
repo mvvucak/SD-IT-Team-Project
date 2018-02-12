@@ -65,6 +65,12 @@ body {
   box-shadow: 5px 10px #888888;
   font-size: 25px;
   padding: 10%;
+  min-height: 80px;
+  box-sizing: border-box;
+}
+
+.aiNum {
+  text-decoration: underline;
 }
 
 .grid-container {
@@ -75,6 +81,7 @@ body {
 }
 
 #btn-group {
+  disabled: true;
   padding-left: 37%;
 }
 

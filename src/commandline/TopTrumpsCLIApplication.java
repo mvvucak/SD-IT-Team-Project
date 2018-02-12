@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import io.dropwizard.cli.Cli;
 import logic.*;
 import logic.Game.Round;
+import database.Connection1;
 
 /**
  * Top Trumps command line application
@@ -48,14 +49,28 @@ public class TopTrumpsCLIApplication extends View {
 			int choice = giveOptions(menuOptions, "Would you like to View Statistics (1) of past games or Play a New Game (2)?");
 			if(choice == 2) {
 			startGame = true;
-			} else { if(choice == 1) 
-				print("Okay! Here are your statistics");
+			} else { 
+				if(choice == 1)  {
+					print("Okay! Here are your statistics");
+					pullStats();
+				}
 			}
 		}
 		return startGame;
 	}
 	
 	
+	private static void pullStats() {
+		Connection1 db = new Connection1(); 
+		db.connection();
+		print(""+ "total number of games " + db.numberofgames());
+		print(""+ "number of times computer won "+db.ai());
+		print(""+"number of times human wins "+db.humanwin());
+		print(""+"the average number of draws "+db.drawsum());
+		print(""+"the largest number of rounds played in a single game "+db.maxroundspergame());
+		db.closeconnection();
+	}
+
 	public static int giveOptions(int[] answers, String msg) {
 		int countTries = 0;
 		int response;
@@ -79,11 +94,10 @@ public class TopTrumpsCLIApplication extends View {
 		System.out.println(c.printCard());
 	}
 	
-	
 	public static void print(String str) {
 		System.out.println(str);
 	}
-	
+
 	public void loading()   {
 		try {
 			System.out.print("\n Loading.");

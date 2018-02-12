@@ -5,12 +5,17 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Scanner;
 
+import database.Connection1;
+
 import java.io.*;
+
+
 
 public class Game {
 	
 	private int gameId;
 	private boolean isGameComplete, writeLog;
+	private Player gameWinner;
 	private int noOfPlayers = 1;
 	private Player[] playerList;
 	private Player operator; // ref to the person playing
@@ -26,6 +31,7 @@ public class Game {
 	public Game(int noOfAi, int newGameId) {
 		this.gameId = newGameId;
 		this.isGameComplete = false;
+		this.gameWinner = null;
 		this.noOfPlayers = this.noOfPlayers + noOfAi;
 		this.playerList = new Player[this.noOfPlayers];
 		this.pRemainingCount = this.noOfPlayers;
@@ -57,7 +63,8 @@ public class Game {
 		this.mainDeck = new Deck(pack, pleaseShuffle);
 		if(writeLog) logger.sendDeck(this.mainDeck);
 		this.init();
-		
+		Connection1 db = new Connection1();
+		db.connection();
 	}
 
 	public void init() {
@@ -74,7 +81,7 @@ public class Game {
 	}
 	
 	public Round getCurrentRound() {
-		return this.roundList.get(this.roundCount);
+		return this.roundList.get(roundList.size() - 1);
 	}
 	
 	private void dealCards() {
@@ -153,9 +160,9 @@ public class Game {
 	 */
 	private void finishGame()
 	{
-		Player gameWinner = playerList[currentPlayerTurn];
+		this.gameWinner = playerList[currentPlayerTurn];
 		//Transfer remaining communal pile cards to winner's deck.
-		gameWinner.addWonCards(this.mainDeck);
+		this.gameWinner.addWonCards(this.mainDeck);
 		this.mainDeck.emptyDeck();
 		this.isGameComplete = true;
 	}
@@ -171,13 +178,13 @@ public class Game {
 			int cat = rnd.getCategory();
 			Card.indexToCompare = cat;
 			// we need to get all current players in game to being comparing
-			Player[] playersInGame = rnd.getPlayersInRound();
-			Arrays.sort(playersInGame, new Round());
+			Player[] playerScoreboard = rnd.getPlayerScoreboard();
+			Arrays.sort(playerScoreboard, new Round());
 			// When 1 Player remaining then they automatically win the round
 			if(pRemainingCount <= 1) return 1; 
 
-			int firstPlace = playersInGame[0].getCurrentCard().getRelevantCat(cat);
-			int secondPlace = playersInGame[1].getCurrentCard().getRelevantCat(cat);
+			int firstPlace = playerScoreboard[0].getCurrentCard().getRelevantCat(cat);
+			int secondPlace = playerScoreboard[1].getCurrentCard().getRelevantCat(cat);
 			// If we subtract 1st place score from 2nd place 
 			// then we can determine the round result
 			return firstPlace - secondPlace;
@@ -310,6 +317,10 @@ public class Game {
 	public boolean getIsGameComplete() {
 		return this.isGameComplete;
 	}
+	
+	public Player getGameWinner() {
+		return this.gameWinner;
+	}
 		
 	/**
 	 * The core game loop 
@@ -333,15 +344,16 @@ public class Game {
 			Session.view.displayEndRound(rnd);
 			if(writeLog) this.logger.writePlayerDecks(rnd.getRoundNumber());
 		}
-		Player gameWinner = playerList[currentPlayerTurn];
+		this.gameWinner = playerList[currentPlayerTurn];
 		if(writeLog) 
 			{
 				this.logger.writeWinner(gameWinner);
 				System.err.println("plz");
 				this.logger.saveLog();
 			}
-		System.out.println(gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
-		Session.view.gameOver(gameWinner);
+		System.out.println(this.gameWinner.getName()+" won with "+gameWinner.getDeck().getDeckSize());
+		Session.view.gameOver(this.gameWinner);
+		this.updateDatabase();
 	}
 	
 	public void processTurn(Round rnd, int categoryChoice) {
@@ -349,7 +361,7 @@ public class Game {
 		rnd.setResultStatus(this.findRoundResult(rnd));
 		
 		if(rnd.getResultStatus() == 1) {
-			Player winner = rnd.playersInRound[0];
+			Player winner = rnd.playerScoreboard[0];
 			rnd.setWinner(winner);
 			rnd.setWinningCard(winner.getCurrentCard());
 			this.processWonRound(winner);
@@ -362,13 +374,64 @@ public class Game {
 		}
 	}
 	
+	public void updateDatabase() {
+		if(this.gameWinner == null) return;
+		
+		Connection1 db = new Connection1();
+		int roundsPlayed = this.roundList.size();
+		boolean humanWinner;
+		int drawsPerGame = 0; // how many draws (a.k.a ties)  
+		int[] playerWinCount = new int[5]; // an array counting the number of round wins associated with a player
+		
+		// build playerWinCount array
+		//  Because you can have a max of 5 players 
+		for(int i = 0; i < playerWinCount.length; i++) {
+				playerWinCount[i] = 0;
+		}
+		
+		for(int i = 0; i < roundsPlayed; i++) {
+			Round rnd = roundList.get(i);
+			// check if round resulted in draw and increment 
+			if(rnd.getResultStatus() == 0) {
+				drawsPerGame++;
+			}
+			
+			for(int j = 0; j < playerList.length; j++) {
+				if(rnd.getWinner() == playerList[j]) {
+					playerWinCount[j]++;
+				}
+			}
+		}
+		
+		int human = playerWinCount[0];
+		int comp1 = playerWinCount[1];
+		int comp2 = playerWinCount[2];
+		int comp3 = playerWinCount[3];
+		int comp4 = playerWinCount[4];
+		
+		if(this.operator == this.gameWinner) {
+			humanWinner = true;
+		} else {
+			humanWinner = false;
+		}
+		System.out.println(humanWinner);
+		//open 
+		db.connection();
+		// send all game values - the order: draws per game, 
+		// human winner (boolean rounds, 
+		// int drawspergame, boolean humanwinner, int ties, int roundspergame, 
+		// int human, int player2, int player3, int player4, int player5
+		db.insert( drawsPerGame, humanWinner, roundsPlayed, 
+				human, comp1, comp2, comp3, comp4);
+		db.closeconnection();
+	}
 	
 	public class Round implements Comparator<Player> {
 		
 		private int roundNo, category, drawsOfTheCards, resultStatus; 
 		private Player startingPlayer, winner;
 		private Card startingCard, winningCard;
-		private Player[] playersInRound;
+		private Player[] playersInRound, playerScoreboard;
 		private Card[] cardsDrawn;
 		
 		Round(Player startingPlayer) {
@@ -383,6 +446,7 @@ public class Game {
 			this.cardsDrawn = new Card[pRemainingCount];
 			this.winningCard = null;
 			this.playersInRound = new Player[pRemainingCount];
+			this.playerScoreboard = new Player[pRemainingCount];
 			this.run();
 		}
 		
@@ -406,6 +470,10 @@ public class Game {
 		
 		public Player[] getPlayersInRound() {
 			return this.playersInRound;
+		}
+		
+		public Player[] getPlayerScoreboard() {
+			return this.playerScoreboard;
 		}
 
 		public void setCardsDrawn(Card[] allCardsDrawn) {
@@ -441,14 +509,17 @@ public class Game {
 		}
 
 		private void run() {
-			
+			int pos = 0;
 			for(Player p : playerList) {
 				if(p.getActiveStatus() == false) continue;
 				p.drawCard();
-				this.playersInRound[this.drawsOfTheCards] = p;
+				this.playersInRound[pos] = p;
+				this.playerScoreboard[pos] = p;
 				this.cardsDrawn[this.drawsOfTheCards] = p.getCurrentCard();
+				pos++;
 				this.drawsOfTheCards++;
 			}
+			
 			if(writeLog) logger.writeTopCards();
 			gameDrawCount += this.drawsOfTheCards;
 			mainDeck.addCardsToBottom(this.cardsDrawn, this.drawsOfTheCards);
