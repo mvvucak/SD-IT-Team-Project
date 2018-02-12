@@ -88,7 +88,6 @@ public class TopTrumpsOnlineApplication extends Application<TopTrumpsJSONConfigu
     public void initialize(Bootstrap<TopTrumpsJSONConfiguration> bootstrap) {
     	bootstrap.addBundle(new ViewBundle<TopTrumpsJSONConfiguration>());
     	bootstrap.addBundle(new AssetsBundle("/assets/", "/assets", null));
-	    //bootstrap.addBundle(new AssetsBundle("/assets/", "/", null));
     }
 
 }
