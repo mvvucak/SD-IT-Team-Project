@@ -28,14 +28,14 @@ public class Connection1 {
 	 * 
 	 */
 	public void connection() {
-		password = "mywin";
-		username = "postgres";
-		dbname = "Game";
+		password = "2352006d";
+		username = "m_17_2352006d";
+		dbname = "m_17_2352006d";
 		
-		// jdbc:postgresql://yacata.dcs.gla.ac.uk
+		// 
 		
 		try {
-			connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/" + dbname, username,
+			connection = DriverManager.getConnection("jdbc:postgresql://yacata.dcs.gla.ac.uk:5432/" + dbname, username,
 					password);
 		}
 

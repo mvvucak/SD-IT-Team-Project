@@ -17,7 +17,7 @@ public class TopTrumpsCLIApplication extends View {
 	//private Game cliGame;
 	private static Scanner scan = new Scanner(System.in);
 	// This is the number of seconds loading takes (during testing set to 0)
-	private int loadingTime = 0; 
+	private int loadingTime = 5;
 	/**
 	 * This main method is called by TopTrumps.java when the user specifies that they want to run in
 	 * command line mode. The contents of args[0] is whether we should write game logs to a file.
@@ -33,7 +33,8 @@ public class TopTrumpsCLIApplication extends View {
 		// Loop until the user wants to exit the game
 		while (!userWantsToQuit) {
 			boolean start = displayOptionMenu();
-			if(start) Session.createNewGame(4, writeGameLogsToFile);
+			int aiSelection = selectAiNum();
+			if(start) Session.createNewGame(aiSelection, writeGameLogsToFile);
 			int newGameId = Session.getLatestGame();
 			Game game = Session.findGameById(newGameId);
 			game.play();
@@ -42,6 +43,12 @@ public class TopTrumpsCLIApplication extends View {
 		scan.close();
 	}
 	
+	private static int selectAiNum() {
+		int[] menuOptions = {1,2,3,4};
+		int option = giveOptions(menuOptions, "How many computer players would you like to play against?");
+		return option;
+	}
+
 	private static boolean displayOptionMenu() {
 		boolean startGame = false;
 		while(!startGame) {
@@ -102,7 +109,7 @@ public class TopTrumpsCLIApplication extends View {
 		try {
 			System.out.print("\n Loading.");
 			for(int i = 0; i < this.loadingTime; i++) {
-				Thread.sleep(1000);
+				Thread.sleep(500);
 				System.out.print(".");
 			}
 			System.out.print("\n");
@@ -148,6 +155,7 @@ public class TopTrumpsCLIApplication extends View {
 		loading();
 		print("Round : "+rnd.getRoundNumber());
 		print("Turn :" + rnd.getStartingPlayer().getName());
+		print(rnd.getStartingPlayer().getName() + " drew this card");
 		print(rnd.getStartingCard().printCard());
 	}
 
